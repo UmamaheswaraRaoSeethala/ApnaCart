@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - ApnaCart</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="admin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="logo">ApnaCart</div>
+        <nav>
+            <a href="index.html" class="home-link">Home</a>
+            <button id="logoutBtn" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </nav>
+    </header>
+
+    <main>
+        <div class="admin-container">
+            <div class="admin-header">
+                <h1><i class="fas fa-chart-line"></i> Admin Dashboard – Manage Vegetables</h1>
+                <button onclick="console.log('Test button clicked!'); alert('JavaScript is working!')" style="margin-top: 10px; padding: 10px; background: white; color: #22c55e; border: none; border-radius: 8px; cursor: pointer;">
+                    Test JavaScript
+                </button>
+            </div>
+
+            <!-- Add Vegetable Form -->
+            <div class="add-vegetable-section">
+                <h3><i class="fas fa-plus-circle"></i> Add New Vegetable</h3>
+                <p style="color: red; font-weight: bold;">DEBUG: This form should be visible!</p>
+                <form id="addVegetableForm" class="add-vegetable-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="vegetableName">Vegetable Name</label>
+                            <input type="text" id="vegetableName" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="weightUnit">Weight Unit</label>
+                            <select id="weightUnit" name="weightUnit" required>
+                                <option value="">Select weight unit</option>
+                                <option value="250g">250g</option>
+                                <option value="500g">500g</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="vegetableImage">Image</label>
+                            <input type="file" id="vegetableImage" name="image" accept="image/*" required>
+                        </div>
+                    </div>
+                    <div class="image-preview" id="imagePreview" style="display: none;">
+                        <img id="previewImg" src="" alt="Preview">
+                    </div>
+                    <button type="submit" class="add-btn">
+                        <i class="fas fa-plus"></i> Add Vegetable
+                    </button>
+                </form>
+            </div>
+
+            <!-- Vegetables Table -->
+            <div class="vegetables-section">
+                <div class="vegetables-header">
+                    <h3><i class="fas fa-carrot"></i> Current Vegetables</h3>
+                    <div class="demo-controls">
+                        <button onclick="loadDemoData()" class="demo-btn">
+                            <i class="fas fa-download"></i> Load Demo Data
+                        </button>
+                        <button onclick="clearAllData()" class="demo-btn clear-btn">
+                            <i class="fas fa-trash-alt"></i> Clear All
+                        </button>
+                    </div>
+                </div>
+                <div class="vegetables-grid" id="vegetablesGrid">
+                    <!-- Vegetables will be populated here -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="admin.js"></script>
+    <script src="demo-data.js"></script>
+</body>
+</html>
