@@ -69,27 +69,47 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            🥬 Admin Dashboard – Manage Vegetables
-          </h1>
-          <p className="text-gray-600">
-            Add, edit, and manage your vegetable inventory
-          </p>
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 relative py-8">
+      {/* Fresh Vegetable Background */}
+      <div className="absolute inset-0">
+        {/* Simple Pattern Background */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute top-20 left-10 w-32 h-32 bg-green-400 rounded-full"></div>
+          <div className="absolute top-40 right-20 w-24 h-24 bg-green-300 rounded-full"></div>
+          <div className="absolute bottom-40 left-20 w-20 h-20 bg-green-500 rounded-full"></div>
+          <div className="absolute top-60 left-1/4 w-16 h-16 bg-green-200 rounded-full"></div>
+          <div className="absolute bottom-20 right-1/3 w-28 h-28 bg-green-300 rounded-full"></div>
+          <div className="absolute top-1/3 right-1/4 w-12 h-12 bg-green-400 rounded-full"></div>
         </div>
+        
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-green-50/40 via-white/70 to-green-100/40"></div>
+      </div>
+      
+      {/* Content Overlay */}
+      <div className="relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Admin Dashboard
+            </h1>
+            <p className="text-gray-600">
+              Manage your vegetables inventory
+            </p>
+          </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <AddVegetableForm 
-            onAdd={handleAddVegetable}
-            isLoading={isLoading}
-          />
-          
-          <VegetablesList 
-            vegetables={vegetables}
-            onDelete={handleDeleteVegetable}
-          />
+          {/* Vegetables Management */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <AddVegetableForm 
+              onAdd={handleAddVegetable}
+              isLoading={isLoading}
+            />
+            
+            <VegetablesList 
+              vegetables={vegetables}
+              onDelete={handleDeleteVegetable}
+            />
+          </div>
         </div>
       </div>
     </div>

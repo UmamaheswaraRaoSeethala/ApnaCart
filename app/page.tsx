@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import VegetableCard from '@/components/VegetableCard'
 import CartSelection from '@/components/CartSelection'
+import PWAInstaller from '@/components/PWAInstaller'
 import { Vegetable } from '@prisma/client'
 
 export default function HomePage() {
@@ -19,6 +20,20 @@ export default function HomePage() {
   const cartLimits = {
     small: 4.5, // kg
     family: 7.0  // kg
+  }
+
+  // Helper function to calculate remaining weight precisely
+  const getRemainingWeight = (cartType: 'small' | 'family', currentWeight: number): string => {
+    const cartLimitGrams = cartType === 'small' ? 4500 : 7000 // Convert kg to grams
+    const currentWeightGrams = Math.round(currentWeight * 1000) // Convert kg to grams, round to avoid floating point issues
+    const remainingGrams = cartLimitGrams - currentWeightGrams
+    const remainingKg = remainingGrams / 1000
+    return remainingKg.toFixed(2)
+  }
+
+  // Helper function to format weight consistently
+  const formatWeight = (weightInKg: number): string => {
+    return weightInKg.toFixed(2)
   }
 
   // Default weight for all vegetables (500g)
@@ -63,9 +78,12 @@ export default function HomePage() {
     setTotalWeight(total)
   }, [cartItems])
 
+  // Note: Removed scroll prevention logic to avoid any scroll-related side effects
+
   const getWeightInKg = (weight: string) => {
     if (weight === '1kg') return 1
-    return parseFloat(weight.replace('g', '')) / 1000
+    const grams = parseInt(weight.replace('g', ''))
+    return grams / 1000
   }
 
   const handleWeightChange = (vegetableId: number, weight: string) => {
@@ -155,6 +173,7 @@ export default function HomePage() {
     setSelectedCart(cartType)
     // Reset cart when changing cart type
     setCartItems({})
+    // Note: Removed auto-scroll behavior - vegetables will appear in place
   }
 
   const canPlaceOrder = selectedCart && totalWeight >= cartLimits[selectedCart]
@@ -194,17 +213,18 @@ export default function HomePage() {
   }
 
   const scrollToOrderSummary = () => {
+    // Scroll to order summary when floating cart button is clicked
     const orderSummary = document.getElementById('order-summary')
     if (orderSummary) {
-      orderSummary.scrollIntoView({ behavior: 'smooth' })
+      orderSummary.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 relative">
-      {/* Fresh Vegetable Background Image */}
+      {/* Fresh Vegetable Background */}
       <div className="absolute inset-0">
-        {/* Vegetable Pattern Background */}
+        {/* Simple Pattern Background */}
         <div className="absolute inset-0 opacity-5">
           <div className="absolute top-20 left-10 w-32 h-32 bg-green-400 rounded-full"></div>
           <div className="absolute top-40 right-20 w-24 h-24 bg-green-300 rounded-full"></div>
@@ -224,10 +244,7 @@ export default function HomePage() {
         <header className="bg-white/80 backdrop-blur-md shadow-lg border-b border-green-100 sticky top-0 z-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-6">
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
-                  <span className="text-white text-xl font-bold">🍅</span>
-                </div>
+              <div className="flex items-center">
                 <div className="text-3xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
                   ApnaCart
                 </div>
@@ -237,7 +254,7 @@ export default function HomePage() {
                   onClick={() => router.push('/admin')}
                   className="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white text-sm font-semibold rounded-xl hover:from-green-600 hover:to-green-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                 >
-                  🔧 Admin Panel
+                  Admin Panel
                 </button>
               </nav>
             </div>
@@ -248,7 +265,6 @@ export default function HomePage() {
           {/* Hero Section */}
           <div className="text-center mb-12 md:mb-16">
             <div className="max-w-5xl mx-auto">
-              <div className="text-5xl md:text-7xl mb-4 md:mb-6">🧺</div>
               <h1 className="text-3xl md:text-4xl lg:text-6xl font-bold text-gray-900 mb-4 md:mb-6 leading-tight px-4">
                 Fresh Vegetables,{' '}
                 <span className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
@@ -257,7 +273,7 @@ export default function HomePage() {
               </h1>
               <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed px-4">
                 Choose your basket size, add your favorite vegetables by weight, and place your weekly order. 
-                No complex pricing — just fresh picks by weight with instant WhatsApp ordering.
+                Simple, fresh, and convenient.
               </p>
             </div>
           </div>
@@ -270,18 +286,22 @@ export default function HomePage() {
 
           {/* Vegetables Display */}
           {selectedCart && (
-            <div className="mt-20">
+            <div className="mt-8" style={{ 
+              scrollMargin: '0px', 
+              scrollSnapAlign: 'none',
+              contain: 'layout style'
+            }}>
               <div className="text-center mb-12">
                 <h2 className="text-4xl font-bold text-gray-900 mb-6">
-                  🥬 Fresh Vegetables Available
+                  Fresh Vegetables Available
                 </h2>
                 <div className="inline-flex items-center space-x-6 px-6 py-3 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-green-100">
-                  <span className="text-base font-semibold text-gray-700 flex items-center gap-2">
-                    🛒 <span className="text-green-600">{Object.keys(cartItems).length}</span> Items
+                  <span className="text-base font-semibold text-gray-700">
+                    <span className="text-green-600">{Object.keys(cartItems).length}</span> Items
                   </span>
                   <div className="w-px h-6 bg-green-200"></div>
-                  <span className="text-base font-semibold text-gray-700 flex items-center gap-2">
-                    ⚖️ <span className="text-blue-600">{totalWeight.toFixed(2)}kg</span> / <span className="text-green-600">{cartLimits[selectedCart]}kg</span>
+                  <span className="text-base font-semibold text-gray-700">
+                    <span className="text-blue-600">{formatWeight(totalWeight)}kg</span> / <span className="text-green-600">{cartLimits[selectedCart]}kg</span>
                   </span>
                 </div>
               </div>
@@ -291,7 +311,7 @@ export default function HomePage() {
                 <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-xl border border-green-100">
                   <div className="flex justify-between items-center mb-6">
                     <span className="text-lg font-semibold text-gray-700">
-                      Current Weight: <span className="text-blue-600">{totalWeight.toFixed(2)}kg</span>
+                      Current Weight: <span className="text-blue-600">{formatWeight(totalWeight)}kg</span>
                     </span>
                     <span className="text-lg font-semibold text-gray-700">
                       Required: <span className="text-green-600">{cartLimits[selectedCart]}kg</span>
@@ -320,8 +340,8 @@ export default function HomePage() {
                         : 'bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 border border-blue-200'
                     }`}>
                       {totalWeight >= cartLimits[selectedCart] 
-                        ? '🎉 Basket weight requirement met!' 
-                        : `📝 Add ${(cartLimits[selectedCart] - totalWeight).toFixed(2)}kg more to complete your basket`
+                        ? 'You can now place your order' 
+                        : `Add ${getRemainingWeight(selectedCart, totalWeight)}kg to place your order`
                       }
                     </span>
                   </div>
@@ -346,28 +366,28 @@ export default function HomePage() {
                 ))}
               </div>
 
-              {/* Order Summary */}
-              <div 
-                id="order-summary"
-                className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-xl border border-green-100 mb-8"
-              >
+              {/* Order Summary - Only show when items are added */}
+              {Object.keys(cartItems).length > 0 && (
+                <div 
+                  id="order-summary"
+                  className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-xl border border-green-100 mb-8"
+                >
                 <div className="flex justify-between items-center mb-8">
                   <h3 className="text-3xl font-bold text-gray-900">
-                    🛒 Order Summary
+                    Order Summary
                   </h3>
                   {Object.keys(cartItems).length > 0 && (
                     <button
                       onClick={() => setCartItems({})}
                       className="px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white text-sm font-semibold rounded-xl hover:from-red-600 hover:to-red-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                     >
-                      🗑️ Clear Cart
+                      Clear Cart
                     </button>
                   )}
                 </div>
                 
                 {Object.keys(cartItems).length === 0 ? (
                   <div className="text-center py-12">
-                    <div className="text-6xl mb-6">🛒</div>
                     <h4 className="text-2xl font-semibold text-gray-700 mb-3">Your cart is empty</h4>
                     <p className="text-lg text-gray-500">Select weights and add vegetables to your cart</p>
                   </div>
@@ -382,7 +402,7 @@ export default function HomePage() {
                             <span className="text-lg font-semibold text-gray-800">{vegetable.name}</span>
                             <div className="text-right">
                               <span className="text-lg font-semibold text-gray-700">{item.quantity}x {item.weight}</span>
-                              <div className="text-sm text-gray-500">({(item.weightInKg * item.quantity).toFixed(2)}kg)</div>
+                              <div className="text-sm text-gray-500">({formatWeight(item.weightInKg * item.quantity)}kg)</div>
                             </div>
                           </div>
                         )
@@ -391,10 +411,10 @@ export default function HomePage() {
                     
                     <div className="border-t border-green-200 pt-6">
                       <div className="flex justify-between items-center">
-                        <span className="text-2xl font-bold text-gray-800">Total Weight: {totalWeight.toFixed(2)}kg</span>
+                        <span className="text-2xl font-bold text-gray-800">Total Weight: {formatWeight(totalWeight)}kg</span>
                         {!canPlaceOrder && (
                           <span className="text-red-600 text-lg font-semibold bg-red-100 px-6 py-3 rounded-xl border border-red-200">
-                            📝 Add {(cartLimits[selectedCart] - totalWeight).toFixed(2)}kg more to place order
+                            📝 Add {getRemainingWeight(selectedCart, totalWeight)}kg to place your order
                           </span>
                         )}
                       </div>
@@ -402,6 +422,7 @@ export default function HomePage() {
                   </>
                 )}
               </div>
+              )}
 
               {/* Confirm Order Button */}
               {canPlaceOrder && (
@@ -410,7 +431,7 @@ export default function HomePage() {
                     onClick={handleWhatsAppOrder}
                     className="px-12 py-6 bg-gradient-to-r from-green-500 to-green-600 text-white text-2xl font-bold rounded-2xl hover:from-green-600 hover:to-green-700 transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:-translate-y-1"
                   >
-                    🚀 Confirm Order via WhatsApp
+                    Confirm Order via WhatsApp
                   </button>
                 </div>
               )}
@@ -418,31 +439,34 @@ export default function HomePage() {
           )}
         </main>
 
-                {/* Floating Action Button */}
-                {Object.keys(cartItems).length > 0 && (
-                  <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50">
-                    <button
-                      onClick={handleWhatsAppOrder}
-                      className="px-8 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white text-lg font-bold rounded-full shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300 border border-green-400"
-                    >
-                      {totalWeight >= cartLimits[selectedCart!] 
-                        ? `Place Order with ${selectedCart === 'small' ? 'Small' : 'Family'} Cart 🧺`
-                        : `Add ${(cartLimits[selectedCart!] - totalWeight).toFixed(1)} kg to Place Order 🧺`
-                      }
-                    </button>
-                  </div>
-                )}
+        {/* Floating WhatsApp Order Button - Middle of Page */}
+        {Object.keys(cartItems).length > 0 && (
+          <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50">
+            <button
+              onClick={handleWhatsAppOrder}
+              className="px-8 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white text-lg font-bold rounded-full shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300 border border-green-400"
+            >
+              {totalWeight >= cartLimits[selectedCart!] 
+                ? `Place Order with ${selectedCart === 'small' ? 'Small' : 'Family'} Cart`
+                : `Add ${getRemainingWeight(selectedCart!, totalWeight)}kg to place your order`
+              }
+            </button>
+          </div>
+        )}
 
-                {/* Floating Cart Button */}
-                {showFloatingButton && (
-                  <button
-                    className="fixed bottom-6 right-6 z-50 w-16 h-16 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-full shadow-2xl hover:shadow-3xl flex items-center justify-center text-2xl focus:outline-none focus:ring-4 focus:ring-green-300 transition-all duration-300 hover:scale-110"
-                    onClick={scrollToOrderSummary}
-                    title="View Cart"
-                  >
-                    🛒
-                  </button>
-                )}
+        {/* Floating Cart Button */}
+        {showFloatingButton && (
+          <button
+            className="fixed bottom-6 right-6 z-50 w-16 h-16 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-full shadow-2xl hover:shadow-3xl flex items-center justify-center text-sm font-bold focus:outline-none focus:ring-4 focus:ring-green-300 transition-all duration-300 hover:scale-110"
+            onClick={scrollToOrderSummary}
+            title="View Cart"
+          >
+            Cart
+          </button>
+        )}
+
+        {/* PWA Installer */}
+        <PWAInstaller />
       </div>
     </div>
   )

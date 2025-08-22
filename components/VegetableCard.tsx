@@ -29,48 +29,45 @@ export default function VegetableCard({
 
   return (
     <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-lg border border-green-100 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden">
-      {/* Image Placeholder */}
-      <div className="relative">
-        {vegetable.imageUrl ? (
-          <>
-            <img
-              src={vegetable.imageUrl}
-              alt={vegetable.name}
-              className="w-full h-48 object-cover"
-              onError={(e) => {
-                // Fallback to emoji if image fails to load
-                const target = e.target as HTMLImageElement
-                target.style.display = 'none'
-                target.nextElementSibling?.classList.remove('hidden')
-              }}
-            />
-            <div className="absolute inset-0 w-full h-48 bg-gradient-to-br from-green-100 via-green-200 to-green-300 flex items-center justify-center hidden">
-              <div className="text-center">
-                <div className="text-6xl mb-3 transition-transform duration-300 hover:scale-110">🥬</div>
-                <div className="text-base text-green-800 font-semibold px-4 py-2 bg-white/90 backdrop-blur-sm rounded-full border border-green-200 shadow-sm">
-                  {vegetable.name}
-                </div>
-              </div>
+      {/* Image Section - Only show if admin uploaded an image */}
+      {vegetable.imageUrl && vegetable.imageUrl.trim() !== '' ? (
+        <div className="relative">
+          <img
+            src={vegetable.imageUrl}
+            alt={vegetable.name}
+            className="w-full h-48 object-cover"
+            onError={(e) => {
+              // Hide broken image and show "No Image" placeholder
+              const target = e.target as HTMLImageElement
+              target.style.display = 'none'
+              const parent = target.parentElement
+              if (parent) {
+                parent.innerHTML = `
+                  <div class="w-full h-48 bg-gray-100 flex items-center justify-center border-b border-gray-200">
+                    <div class="text-center">
+                      <div class="text-gray-400 text-sm font-medium">No Image</div>
+                    </div>
+                  </div>
+                `
+              }
+            }}
+          />
+          
+          {/* Brand Badge */}
+          <div className="absolute top-4 left-4">
+            <div className="px-3 py-1 bg-green-500/90 backdrop-blur-sm rounded-full text-xs font-semibold text-white shadow-lg border border-green-400">
+              ApnaCart
             </div>
-          </>
-        ) : (
-          <div className="w-full h-48 bg-gradient-to-br from-green-100 via-green-200 to-green-300 flex items-center justify-center">
-            <div className="text-center">
-              <div className="text-6xl mb-3 transition-transform duration-300 hover:scale-110">🥬</div>
-              <div className="text-base text-green-800 font-semibold px-4 py-2 bg-white/90 backdrop-blur-sm rounded-full border border-green-200 shadow-sm">
-                {vegetable.name}
-              </div>
-            </div>
-          </div>
-        )}
-        
-        {/* Brand Badge */}
-        <div className="absolute top-4 left-4">
-          <div className="px-3 py-1 bg-green-500/90 backdrop-blur-sm rounded-full text-xs font-semibold text-white shadow-lg border border-green-400">
-            ApnaCart
           </div>
         </div>
-      </div>
+      ) : (
+        /* No Image Placeholder */
+        <div className="w-full h-32 bg-gray-100 flex items-center justify-center border-b border-gray-200">
+          <div className="text-center">
+            <div className="text-gray-400 text-sm font-medium">No Image</div>
+          </div>
+        </div>
+      )}
 
       {/* Content */}
       <div className="p-6">
@@ -78,6 +75,8 @@ export default function VegetableCard({
         <h3 className="text-xl font-bold text-gray-900 mb-4 text-center">
           {vegetable.name}
         </h3>
+        
+
         
         {/* Weight Selection Dropdown */}
         <div className="mb-4">
@@ -105,7 +104,7 @@ export default function VegetableCard({
               className="w-full px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white text-sm font-semibold rounded-xl hover:from-green-600 hover:to-green-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 border border-green-400"
               title="Add to Cart"
             >
-              ➕ Add to Cart
+              Add to Cart
             </button>
           </div>
         )}
@@ -146,7 +145,7 @@ export default function VegetableCard({
               onClick={onRemoveFromCart}
               className="px-4 py-2 bg-red-500 text-white text-sm font-semibold rounded-lg hover:bg-red-600 transition-all duration-300 shadow-md hover:shadow-lg"
             >
-              🗑️ Remove
+              Remove
             </button>
           </div>
         )}

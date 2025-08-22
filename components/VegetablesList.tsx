@@ -28,28 +28,29 @@ export default function VegetablesList({ vegetables, onDelete }: VegetablesListP
             className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200"
           >
             <div className="flex items-center space-x-4">
-              {/* Image or Emoji */}
+              {/* Image or No Image Placeholder */}
               <div className="relative">
-                {vegetable.imageUrl ? (
-                  <>
-                    <img
-                      src={vegetable.imageUrl}
-                      alt={vegetable.name}
-                      className="w-12 h-12 object-cover rounded-lg"
-                      onError={(e) => {
-                        // Fallback to emoji if image fails to load
-                        const target = e.target as HTMLImageElement
-                        target.style.display = 'none'
-                        target.nextElementSibling?.classList.remove('hidden')
-                      }}
-                    />
-                    <div className="w-12 h-12 bg-gradient-to-br from-green-100 to-green-300 rounded-lg flex items-center justify-center text-2xl hidden">
-                      🥬
-                    </div>
-                  </>
+                {vegetable.imageUrl && vegetable.imageUrl.trim() !== '' ? (
+                  <img
+                    src={vegetable.imageUrl}
+                    alt={vegetable.name}
+                    className="w-12 h-12 object-cover rounded-lg"
+                    onError={(e) => {
+                      // Replace with "No Image" placeholder if image fails to load
+                      const target = e.target as HTMLImageElement
+                      const parent = target.parentElement
+                      if (parent) {
+                        parent.innerHTML = `
+                          <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center border border-gray-200">
+                            <span class="text-xs text-gray-400 font-medium">No Image</span>
+                          </div>
+                        `
+                      }
+                    }}
+                  />
                 ) : (
-                  <div className="w-12 h-12 bg-gradient-to-br from-green-100 to-green-300 rounded-lg flex items-center justify-center text-2xl">
-                    🥬
+                  <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center border border-gray-200">
+                    <span className="text-xs text-gray-400 font-medium">No Image</span>
                   </div>
                 )}
               </div>

@@ -3,8 +3,15 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    overflow-y: auto;
+    scroll-behavior: auto !important;
+  }
+  
   body {
     font-family: 'Inter', sans-serif;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 }
 
@@ -43,6 +50,8 @@
     box-shadow: 0 35px 60px -12px rgba(0, 0, 0, 0.25);
   }
   
+
+  
   .backdrop-blur-sm {
     backdrop-filter: blur(4px);
   }
@@ -62,7 +71,7 @@
   }
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar - manual only */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -74,17 +83,49 @@
 ::-webkit-scrollbar-thumb {
   background: #22c55e;
   border-radius: 4px;
+  /* Ensure no animations or transitions on scrollbar */
+  transition: none !important;
+  animation: none !important;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: #16a34a;
+  /* Remove any transition on hover */
+  transition: none !important;
 }
 
-/* Smooth transitions for all elements */
+/* Disable all scroll animations globally */
 * {
+  scroll-behavior: auto !important;
+}
+
+/* Remove any potential smooth scrolling */
+html {
+  scroll-behavior: auto !important;
+  -webkit-overflow-scrolling: auto !important;
+}
+
+/* Specific transitions - exclude scroll-related properties */
+*:not(html):not(body) {
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;
+}
+
+/* Ensure no scroll animations */
+html, body {
+  scroll-behavior: auto !important;
+}
+
+/* Prevent any scroll-related transitions */
+html *, body * {
+  scroll-margin: 0 !important;
+  scroll-padding: 0 !important;
+}
+
+/* Disable any focus-based scrolling */
+*:focus {
+  scroll-margin: 0 !important;
 }
 
 /* Basic bounce animation */

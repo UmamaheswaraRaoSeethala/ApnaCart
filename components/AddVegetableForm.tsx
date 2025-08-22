@@ -58,7 +58,7 @@ export default function AddVegetableForm({ onAdd, isLoading }: AddVegetableFormP
 
       <div>
         <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-700 mb-2">
-          Image URL (Optional)
+          Image URL (Manual Upload Only)
         </label>
         <input
           type="url"
@@ -66,10 +66,10 @@ export default function AddVegetableForm({ onAdd, isLoading }: AddVegetableFormP
           value={imageUrl}
           onChange={(e) => setImageUrl(e.target.value)}
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
-          placeholder="https://example.com/image.jpg"
+          placeholder="https://example.com/your-vegetable-image.jpg"
         />
         <p className="text-xs text-gray-500 mt-1">
-          Leave empty to use default vegetable emoji
+          Only manually uploaded images will be shown. Leave empty to display "No Image" placeholder.
         </p>
       </div>
 
