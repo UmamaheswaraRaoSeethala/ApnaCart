@@ -40,6 +40,9 @@ export default function CartSelection({ selectedCart, onCartSelect }: CartSelect
             <h3 className="text-2xl font-bold text-gray-900 mb-3">
               Small Cart
             </h3>
+            <div className="text-3xl font-bold text-green-600 mb-3">
+              ₹349
+            </div>
             <p className="text-gray-600 text-base mb-4">
               Perfect for small families or weekly shopping
             </p>
@@ -72,6 +75,9 @@ export default function CartSelection({ selectedCart, onCartSelect }: CartSelect
             <h3 className="text-2xl font-bold text-gray-900 mb-3">
               Family Cart
             </h3>
+            <div className="text-3xl font-bold text-green-600 mb-3">
+              ₹559
+            </div>
             <p className="text-gray-600 text-base mb-4">
               Ideal for larger families or extended shopping
             </p>
