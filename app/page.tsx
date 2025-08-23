@@ -81,7 +81,6 @@ export default function HomePage() {
   // Note: Removed scroll prevention logic to avoid any scroll-related side effects
 
   const getWeightInKg = (weight: string) => {
-    if (weight === '1kg') return 1
     const grams = parseInt(weight.replace('g', ''))
     return grams / 1000
   }
@@ -368,7 +367,7 @@ export default function HomePage() {
               </div>
 
               {/* Vegetables Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-8 mb-12 px-4 md:px-0">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 md:gap-4 mb-12 px-4 md:px-0">
                 {vegetables.map((vegetable: Vegetable, index: number) => (
                   <VegetableCard
                     key={vegetable.id}
