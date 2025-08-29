@@ -1,0 +1,26 @@
+DEFAULT IMAGE PLACEHOLDER
+
+To set up the default image:
+
+1. Copy one of your existing vegetable images (e.g., copy Tomato.jpeg)
+2. Rename it to "default.jpeg" 
+3. Place it in this same folder (public/images/)
+
+OR
+
+Download a generic vegetable image:
+- Search for "vegetables" on Unsplash, Pexels, or Pixabay
+- Download a JPEG image
+- Rename it to "default.jpeg"
+- Place it in public/images/
+
+The default image will be shown when:
+- A vegetable name doesn't match any existing images
+- An image file is missing or corrupted
+- The automatic matching system can't find a suitable image
+
+Recommended image specifications:
+- Format: JPEG
+- Size: 300x300 pixels or larger
+- Content: Generic vegetables or food items
+- Style: Professional, clean, appetizing

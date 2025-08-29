@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client'
+import { autoLinkVegetableImage } from '@/utils/imageUtils'
 
 const prisma = new PrismaClient()
 
@@ -29,35 +30,40 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { name, weightUnit, imageUrl } = body
+    const { name, fixedWeight, imageUrl } = body
 
     // Validation
-    if (!name || !weightUnit) {
+    if (!name || !fixedWeight) {
       return NextResponse.json(
         { success: false, error: 'Missing required fields' },
         { status: 400 }
       )
     }
 
-    if (!['250g', '500g'].includes(weightUnit)) {
+    if (!['250g', '500g', '1kg'].includes(fixedWeight)) {
       return NextResponse.json(
-        { success: false, error: 'Invalid weight unit. Must be 250g or 500g' },
+        { success: false, error: 'Invalid weight. Must be 250g, 500g, or 1kg' },
         { status: 400 }
       )
     }
 
-    // Create vegetable
+    // Automatically link the best available image
+    const autoLinkedImage = autoLinkVegetableImage(name, imageUrl)
+
+    // Create vegetable with automatically linked image
     const vegetable = await prisma.vegetable.create({
       data: {
         name: name.trim(),
-        weightUnit,
-        imageUrl: imageUrl || null
+        fixedWeight,
+        weightUnit: fixedWeight, // Keep for backward compatibility
+        imageUrl: autoLinkedImage // Use automatically linked image
       }
     })
 
     return NextResponse.json({
       success: true,
-      vegetable
+      vegetable,
+      message: `Vegetable created successfully with automatically linked image: ${autoLinkedImage}`
     }, { status: 201 })
   } catch (error) {
     console.error('Error creating vegetable:', error)

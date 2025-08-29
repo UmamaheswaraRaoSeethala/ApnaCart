@@ -2,12 +2,15 @@
 
 import { useState, useEffect } from 'react'
 import AddVegetableForm from '@/components/AddVegetableForm'
+import EditVegetableForm from '@/components/EditVegetableForm'
 import VegetablesList from '@/components/VegetablesList'
+import Header from '@/components/Header'
 import { Vegetable } from '@prisma/client'
 
 export default function AdminPage() {
   const [vegetables, setVegetables] = useState<Vegetable[]>([])
   const [isLoading, setIsLoading] = useState(false)
+  const [editingVegetable, setEditingVegetable] = useState<Vegetable | null>(null)
 
   // Fetch vegetables on component mount
   useEffect(() => {
@@ -26,7 +29,7 @@ export default function AdminPage() {
     }
   }
 
-  const handleAddVegetable = async (name: string, weightUnit: string, imageUrl: string) => {
+  const handleAddVegetable = async (name: string, fixedWeight: string, imageUrl: string) => {
     setIsLoading(true)
     try {
       const response = await fetch('/api/vegetables', {
@@ -34,7 +37,7 @@ export default function AdminPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name, weightUnit, imageUrl }),
+        body: JSON.stringify({ name, fixedWeight, imageUrl }),
       })
 
       if (response.ok) {
@@ -42,6 +45,31 @@ export default function AdminPage() {
       } else {
         const errorData = await response.json()
         alert(errorData.error || 'Failed to add vegetable')
+      }
+    } catch (error) {
+      alert('Network error. Please try again.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleEditVegetable = async (id: number, name: string, fixedWeight: string, imageUrl: string) => {
+    setIsLoading(true)
+    try {
+      const response = await fetch(`/api/vegetables/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, fixedWeight, imageUrl }),
+      })
+
+      if (response.ok) {
+        await fetchVegetables() // Refresh the list
+        setEditingVegetable(null) // Close edit form
+      } else {
+        const errorData = await response.json()
+        alert(errorData.error || 'Failed to update vegetable')
       }
     } catch (error) {
       alert('Network error. Please try again.')
@@ -68,8 +96,19 @@ export default function AdminPage() {
     }
   }
 
+  const startEditing = (vegetable: Vegetable) => {
+    setEditingVegetable(vegetable)
+  }
+
+  const cancelEditing = () => {
+    setEditingVegetable(null)
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 relative py-8">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 relative">
+      {/* Header */}
+      <Header />
+      
       {/* Fresh Vegetable Background */}
       <div className="absolute inset-0">
         {/* Simple Pattern Background */}
@@ -87,7 +126,7 @@ export default function AdminPage() {
       </div>
       
       {/* Content Overlay */}
-      <div className="relative z-10">
+      <div className="relative z-10 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -100,14 +139,24 @@ export default function AdminPage() {
 
           {/* Vegetables Management */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <AddVegetableForm 
-              onAdd={handleAddVegetable}
-              isLoading={isLoading}
-            />
+            {editingVegetable ? (
+              <EditVegetableForm 
+                vegetable={editingVegetable}
+                onSave={handleEditVegetable}
+                onCancel={cancelEditing}
+                isLoading={isLoading}
+              />
+            ) : (
+              <AddVegetableForm 
+                onAdd={handleAddVegetable}
+                isLoading={isLoading}
+              />
+            )}
             
             <VegetablesList 
               vegetables={vegetables}
               onDelete={handleDeleteVegetable}
+              onEdit={startEditing}
             />
           </div>
         </div>

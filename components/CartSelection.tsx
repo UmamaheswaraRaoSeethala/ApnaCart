@@ -1,11 +1,16 @@
 'use client'
 
-interface CartSelectionProps {
-  selectedCart: 'small' | 'family' | null
-  onCartSelect: (cartType: 'small' | 'family') => void
-}
+import { motion } from 'framer-motion'
+import { useCart } from '@/contexts/CartContext'
 
-export default function CartSelection({ selectedCart, onCartSelect }: CartSelectionProps) {
+export default function CartSelection() {
+  const { state, setCartType } = useCart()
+  const { cartType } = state
+  
+  const handleCartSelect = (type: 'small' | 'family') => {
+    setCartType(type)
+  }
+  
   return (
     <div className="mb-16">
       <div className="text-center mb-12">
@@ -19,13 +24,15 @@ export default function CartSelection({ selectedCart, onCartSelect }: CartSelect
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 max-w-4xl mx-auto px-4 md:px-0">
         {/* Small Cart */}
-        <div 
+        <motion.div 
           className={`relative p-6 md:p-8 rounded-2xl border-2 transition-all duration-300 cursor-pointer overflow-hidden ${
-            selectedCart === 'small'
+            cartType === 'small'
               ? 'border-green-500 bg-green-50 shadow-xl scale-105'
               : 'border-green-200 bg-white/80 backdrop-blur-sm hover:border-green-400 shadow-lg hover:shadow-xl hover:scale-105'
           }`}
-          onClick={() => onCartSelect('small')}
+          onClick={() => handleCartSelect('small')}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
         >
           {/* Background Pattern */}
           <div className="absolute inset-0 opacity-5">
@@ -50,17 +57,30 @@ export default function CartSelection({ selectedCart, onCartSelect }: CartSelect
               <span className="w-2 h-2 bg-green-500 rounded-full"></span>
               Up to 4.5 kg vegetables
             </div>
+            
+            {/* Selection Indicator */}
+            {cartType === 'small' && (
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                className="absolute top-4 right-4 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white"
+              >
+                ✓
+              </motion.div>
+            )}
           </div>
-        </div>
+        </motion.div>
 
         {/* Family Cart */}
-        <div 
+        <motion.div 
           className={`relative p-6 md:p-8 rounded-2xl border-2 transition-all duration-300 cursor-pointer overflow-hidden ${
-            selectedCart === 'family'
+            cartType === 'family'
               ? 'border-green-500 bg-green-50 shadow-xl scale-105'
               : 'border-green-200 bg-white/80 backdrop-blur-sm hover:border-green-400 shadow-lg hover:shadow-xl hover:scale-105'
           }`}
-          onClick={() => onCartSelect('family')}
+          onClick={() => handleCartSelect('family')}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
         >
           {/* Background Pattern */}
           <div className="absolute inset-0 opacity-5">
@@ -85,9 +105,37 @@ export default function CartSelection({ selectedCart, onCartSelect }: CartSelect
               <span className="w-2 h-2 bg-green-500 rounded-full"></span>
               Up to 7 kg vegetables
             </div>
+            
+            {/* Selection Indicator */}
+            {cartType === 'family' && (
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                className="absolute top-4 right-4 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white"
+              >
+                ✓
+              </motion.div>
+            )}
           </div>
-        </div>
+        </motion.div>
       </div>
+      
+      {/* Cart Selection Feedback */}
+      {cartType && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mt-8 text-center"
+        >
+          <div className="inline-flex items-center gap-3 px-6 py-3 bg-green-100 rounded-full border border-green-200">
+            <span className="w-3 h-3 bg-green-500 rounded-full"></span>
+            <span className="text-green-800 font-medium">
+              {cartType === 'small' ? 'Small Cart' : 'Family Cart'} selected! 
+              You can now add vegetables up to {cartType === 'small' ? '4.5kg' : '7kg'}.
+            </span>
+          </div>
+        </motion.div>
+      )}
     </div>
   )
 }

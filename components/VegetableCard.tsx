@@ -1,39 +1,102 @@
 'use client'
 
+import { useState } from 'react'
+import { motion } from 'framer-motion'
 import { Vegetable } from '@prisma/client'
+import { getVegetableImage } from '@/utils/imageUtils'
+import { useCart } from '@/contexts/CartContext'
+import FlyingItem from './FlyingItem'
+import WeightLimitWarning from './WeightLimitWarning'
+import { Plus, Minus } from 'lucide-react'
 
 interface VegetableCardProps {
   vegetable: Vegetable
-  selectedWeight: string
-  onWeightChange: (weight: string) => void
-  onAddToCart: () => void
-  onRemoveFromCart: () => void
-  onIncreaseQuantity: () => void
-  onDecreaseQuantity: () => void
-  isInCart: boolean
-  quantity?: number
 }
 
-export default function VegetableCard({ 
-  vegetable, 
-  selectedWeight,
-  onWeightChange,
-  onAddToCart,
-  onRemoveFromCart,
-  onIncreaseQuantity,
-  onDecreaseQuantity,
-  isInCart,
-  quantity = 1
-}: VegetableCardProps) {
-  const weightOptions = ['250g', '500g']
-
+export default function VegetableCard({ vegetable }: VegetableCardProps) {
+  const { addItem, canAddItem, getRemainingWeight, getCartLimit, state, updateQuantity, removeItem } = useCart()
+  const [isFlying, setIsFlying] = useState(false)
+  const [showWarning, setShowWarning] = useState(false)
+  
+  const { cartType, totalWeight, items } = state
+  
+  // Get the best available image for this vegetable
+  const imageSrc = vegetable.imageUrl && vegetable.imageUrl.trim() !== '' 
+    ? vegetable.imageUrl 
+    : getVegetableImage(vegetable.name)
+  
+  // Get weight information
+  const weight = vegetable.fixedWeight || vegetable.weightUnit || '500g'
+  const weightInKg = weight.includes('kg') 
+    ? parseFloat(weight.replace('kg', '')) 
+    : parseInt(weight.replace('g', '')) / 1000
+  
+  // Check if item is in cart and get its quantity
+  const cartItem = items.find(item => item.id === vegetable.id)
+  const isInCart = !!cartItem
+  const quantity = cartItem?.quantity || 0
+  
+  const handleAddToCart = () => {
+    if (!cartType) {
+      alert('Please select a cart type first!')
+      return
+    }
+    
+    if (canAddItem(weightInKg)) {
+      // Start flying animation
+      setIsFlying(true)
+      
+      // Add item to cart
+      const success = addItem(vegetable, weight, weightInKg)
+      
+      if (success) {
+        // Animation will complete and reset isFlying
+      }
+    } else {
+      // Show weight limit warning
+      setShowWarning(true)
+      setTimeout(() => setShowWarning(false), 5000)
+    }
+  }
+  
+  const handleIncreaseQuantity = () => {
+    if (cartItem) {
+      const newQuantity = quantity + 1
+      const success = updateQuantity(cartItem.id, newQuantity)
+      if (!success) {
+        setShowWarning(true)
+        setTimeout(() => setShowWarning(false), 5000)
+      }
+    }
+  }
+  
+  const handleDecreaseQuantity = () => {
+    if (cartItem) {
+      const newQuantity = quantity - 1
+      if (newQuantity <= 0) {
+        // Remove item from cart when quantity reaches 0
+        removeItem(cartItem.id)
+      } else {
+        updateQuantity(cartItem.id, newQuantity)
+      }
+    }
+  }
+  
+  const handleAnimationComplete = () => {
+    setIsFlying(false)
+  }
+  
   return (
-    <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-lg border border-green-100 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden">
-      {/* Image Section - Only show if admin uploaded an image */}
-      {vegetable.imageUrl && vegetable.imageUrl.trim() !== '' ? (
+    <>
+      <motion.div 
+        className="bg-white/90 backdrop-blur-md rounded-2xl shadow-lg border border-green-100 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden"
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+      >
+        {/* Image Section - Show automatic or custom image */}
         <div className="relative">
           <img
-            src={vegetable.imageUrl}
+            src={imageSrc}
             alt={vegetable.name}
             className="w-full h-36 object-cover"
             onError={(e) => {
@@ -59,95 +122,122 @@ export default function VegetableCard({
               ApnaCart
             </div>
           </div>
-        </div>
-      ) : (
-        /* No Image Placeholder */
-        <div className="w-full h-28 bg-gray-100 flex items-center justify-center border-b border-gray-200">
-          <div className="text-center">
-            <div className="text-gray-400 text-sm font-medium">No Image</div>
-          </div>
-        </div>
-      )}
-
-      {/* Content */}
-      <div className="p-4">
-        {/* Product Name */}
-        <h3 className="text-lg font-bold text-gray-900 mb-3 text-center">
-          {vegetable.name}
-        </h3>
-        
-        {/* Weight Selection Dropdown */}
-        <div className="mb-3">
-          <label className="block text-xs font-medium text-gray-700 mb-2 text-center">
-            Select Weight:
-          </label>
-          <select
-            value={selectedWeight}
-            onChange={(e) => onWeightChange(e.target.value)}
-            className="w-full px-3 py-2 border-2 border-green-200 rounded-lg text-xs focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 bg-white/80 backdrop-blur-sm hover:bg-white hover:border-green-300"
-          >
-            {weightOptions.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
-        </div>
-        
-        {/* Add Button - Only show when not in cart */}
-        {!isInCart && (
-          <div className="text-center">
-            <button
-              onClick={onAddToCart}
-              className="w-full px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white text-xs font-semibold rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 border border-green-400"
-              title="Add to Cart"
+          
+          {/* Quantity Badge if in cart */}
+          {isInCart && (
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              className="absolute top-2 right-2 w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white text-sm font-bold shadow-lg"
             >
-              Add to Cart
-            </button>
+              {quantity}
+            </motion.div>
+          )}
+        </div>
+
+        {/* Content */}
+        <div className="p-4">
+          {/* Product Name */}
+          <h3 className="text-lg font-bold text-gray-900 mb-3 text-center">
+            {vegetable.name}
+          </h3>
+          
+          {/* Fixed Weight Display */}
+          <div className="mb-3 text-center">
+            <div className="inline-block px-3 py-2 bg-green-100 text-green-800 text-sm font-medium rounded-lg border border-green-200">
+              Weight: {weight}
+            </div>
           </div>
-        )}
-        
-        {/* Quantity Controls - Show when in cart */}
-        {isInCart && (
-          <div className="text-center">
-            <div className="flex items-center justify-center gap-2 mb-3">
-              {/* Bookmark Button */}
-              <button className="w-6 h-6 bg-white border-2 border-green-200 rounded-md flex items-center justify-center hover:bg-green-50 hover:border-green-400 transition-all duration-200 shadow-sm">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
-                </svg>
-              </button>
-              
+          
+          {/* Add Button - Only show when not in cart */}
+          {!isInCart && (
+            <div className="text-center">
+              <motion.button
+                onClick={handleAddToCart}
+                className="w-full px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white text-xs font-semibold rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 border border-green-400"
+                title="Add to Cart"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                disabled={!cartType}
+              >
+                {!cartType ? 'Select Cart First' : 'Add to Cart'}
+              </motion.button>
+            </div>
+          )}
+          
+          {/* Quantity Controls - Show when in cart */}
+          {isInCart && (
+            <div className="text-center">
               {/* Quantity Controls */}
-              <div className="flex items-center bg-gradient-to-r from-green-500 to-green-600 rounded-lg overflow-hidden shadow-lg border border-green-400">
-                <button
-                  onClick={onDecreaseQuantity}
-                  className="w-6 h-6 bg-green-600 text-white hover:bg-green-700 transition-colors flex items-center justify-center font-bold text-xs"
+              <div className="flex items-center justify-center gap-3 mb-3">
+                <motion.button
+                  onClick={handleDecreaseQuantity}
+                  className="w-10 h-10 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors shadow-lg"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                  title="Decrease Quantity"
                 >
-                  -
-                </button>
-                <div className="w-8 h-6 bg-white flex items-center justify-center">
-                  <span className="text-green-600 font-bold text-xs">{quantity}</span>
+                  <Minus className="w-4 h-4" />
+                </motion.button>
+                
+                <div className="w-12 h-10 bg-white border-2 border-green-200 rounded-lg flex items-center justify-center shadow-lg">
+                  <span className="text-green-600 font-bold text-lg">{quantity}</span>
                 </div>
-                <button
-                  onClick={onIncreaseQuantity}
-                  className="w-6 h-6 bg-green-600 text-white hover:bg-green-700 transition-colors flex items-center justify-center font-bold text-xs"
+                
+                <motion.button
+                  onClick={handleIncreaseQuantity}
+                  className="w-10 h-10 bg-green-500 text-white rounded-full flex items-center justify-center hover:bg-green-600 transition-colors shadow-lg"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                  title="Increase Quantity"
+                  disabled={!canAddItem(weightInKg)}
                 >
-                  +
-                </button>
+                  <Plus className="w-4 h-4" />
+                </motion.button>
+              </div>
+              
+              {/* In Cart Badge */}
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full border border-green-200">
+                <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                In Cart
+              </div>
+              
+              {/* Total Weight for this item */}
+              <div className="mt-2 text-xs text-gray-600">
+                Total: {(weightInKg * quantity).toFixed(2)}kg
               </div>
             </div>
-            
-            {/* Remove Button */}
-            <button
-              onClick={onRemoveFromCart}
-              className="px-3 py-1 bg-red-500 text-white text-xs font-semibold rounded-md hover:bg-red-600 transition-all duration-300 shadow-md hover:shadow-lg"
-            >
-              Remove
-            </button>
-          </div>
-        )}
-      </div>
-    </div>
+          )}
+          
+          {/* Weight Limit Info */}
+          {cartType && (
+            <div className="mt-3 text-center">
+              <div className="text-xs text-gray-500">
+                <span className="font-medium">Cart:</span> {cartType === 'small' ? 'Small (4.5kg)' : 'Family (7kg)'}
+              </div>
+              <div className="text-xs text-gray-500">
+                <span className="font-medium">Used:</span> {totalWeight.toFixed(2)}kg
+              </div>
+            </div>
+          )}
+        </div>
+      </motion.div>
+      
+      {/* Flying Item Animation */}
+      <FlyingItem
+        vegetable={vegetable}
+        weight={weight}
+        isVisible={isFlying}
+        onAnimationComplete={handleAnimationComplete}
+      />
+      
+      {/* Weight Limit Warning */}
+      <WeightLimitWarning
+        isVisible={showWarning}
+        onClose={() => setShowWarning(false)}
+        remainingWeight={getRemainingWeight()}
+        cartType={cartType || 'small'}
+      />
+    </>
   )
 }
