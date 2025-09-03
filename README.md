@@ -1,6 +1,6 @@
 # 🥬 ApnaCart - Next.js Vegetable Delivery Service
 
-A modern, full-stack vegetable delivery service built with **Next.js 14**, **Prisma ORM**, and **SQLite**. Features a customer-facing cart system and an admin panel for managing vegetables.
+A modern, full-stack vegetable delivery service built with **Next.js 14**, **Prisma ORM**, and **SQLite (local) / PostgreSQL (production)**. Features a customer-facing cart system and an admin panel for managing vegetables.
 
 ## ✨ Features
 
@@ -21,7 +21,7 @@ A modern, full-stack vegetable delivery service built with **Next.js 14**, **Pri
 
 - **Frontend**: Next.js 14, React 18, TypeScript
 - **Styling**: Tailwind CSS
-- **Database**: SQLite with Prisma ORM
+- **Database**: SQLite (local) with Prisma ORM, PostgreSQL on RDS (production)
 - **API**: Next.js API Routes
 - **State Management**: React hooks + SWR for data fetching
 
@@ -61,7 +61,7 @@ npm install
 # Generate Prisma client
 npm run db:generate
 
-# Push schema to database
+# Local development (SQLite): create/update schema & run app
 npm run db:push
 
 # (Optional) Open Prisma Studio
@@ -164,6 +164,14 @@ npm i -g vercel
 vercel
 ```
 
+### AWS Amplify + RDS (Production)
+
+- Set `DATABASE_URL` in Amplify environment variables (Amplify Console → App settings → Environment variables).
+- `DATABASE_URL` should point to your RDS PostgreSQL instance, for example:
+  `postgresql://admin:yourpassword@yourdb-endpoint.rds.amazonaws.com:5432/apnacart`
+- Build runs `npx prisma generate` and `npm run build`. Deployment runs `npm run migrate:deploy` to apply migrations on RDS.
+- Amplify build settings are configured in `amplify.yml`.
+
 ### Other Platforms
 - **Netlify**: Build command: `npm run build`
 - **Railway**: Automatic deployment from GitHub
@@ -173,13 +181,47 @@ vercel
 
 ```bash
 npm run dev          # Start development server
-npm run build        # Build for production
+npm run build        # Generate Prisma client and build for production
 npm run start        # Start production server
 npm run lint         # Run ESLint
 npm run db:generate  # Generate Prisma client
 npm run db:push      # Push schema changes
+npm run migrate:deploy # Apply migrations in production (RDS)
 npm run db:studio    # Open Prisma Studio
 ```
+
+## 🏗️ Environment Configuration
+
+### Local Development
+
+Create `.env.local` with SQLite:
+
+```
+DATABASE_URL="file:./prisma/dev.db"
+```
+
+The app will use SQLite locally via Prisma.
+
+### Production (AWS Amplify + RDS)
+
+- Do not commit `.env` with secrets. Set `DATABASE_URL` in Amplify Console.
+- Example value:
+
+```
+DATABASE_URL="postgresql://admin:yourpassword@yourdb-endpoint.rds.amazonaws.com:5432/apnacart"
+```
+
+Next.js reads `DATABASE_URL` at build/runtime on the server automatically.
+
+## 🧭 Migration Workflow
+
+- Local dev (SQLite):
+  - Edit `prisma/schema.prisma`
+  - Create a migration and update local DB: `npx prisma migrate dev`
+
+- Production (RDS via Amplify):
+  - Commit and push
+  - Amplify runs `npm run migrate:deploy` to apply pending migrations on RDS
 
 ## 🐛 Troubleshooting
 
