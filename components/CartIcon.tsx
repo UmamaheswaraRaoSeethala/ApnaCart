@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { useCart } from '@/contexts/CartContext'
 import { ShoppingCart } from 'lucide-react'
+import { formatTotalWeight } from '@/utils/weightUtils'
 
 export default function CartIcon() {
   const { state, openCart } = useCart()
@@ -46,7 +47,7 @@ export default function CartIcon() {
           animate={{ opacity: 1, y: 0 }}
           className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-white text-gray-800 text-xs font-medium px-2 py-1 rounded-md shadow-lg border border-gray-200 whitespace-nowrap"
         >
-          {totalWeight.toFixed(2)}kg / {cartType === 'small' ? '4.5' : '7.0'}kg
+          {formatTotalWeight(totalWeight)} / {cartType === 'small' ? '4.5kg' : '7kg'}
         </motion.div>
       )}
       

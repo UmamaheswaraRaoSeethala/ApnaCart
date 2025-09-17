@@ -7,6 +7,7 @@ import { getVegetableImage } from '@/utils/imageUtils'
 import { useCart } from '@/contexts/CartContext'
 import FlyingItem from './FlyingItem'
 import WeightLimitWarning from './WeightLimitWarning'
+import { formatWeight, formatTotalWeight, convertToGrams, gramsToKg } from '@/utils/weightUtils'
 import { Plus, Minus } from 'lucide-react'
 
 interface VegetableCardProps {
@@ -27,9 +28,8 @@ export default function VegetableCard({ vegetable }: VegetableCardProps) {
   
   // Get weight information
   const weight = vegetable.fixedWeight || vegetable.weightUnit || '500g'
-  const weightInKg = weight.includes('kg') 
-    ? parseFloat(weight.replace('kg', '')) 
-    : parseInt(weight.replace('g', '')) / 1000
+  const weightInGrams = convertToGrams(weight)
+  const weightInKg = gramsToKg(weightInGrams)
   
   // Check if item is in cart and get its quantity
   const cartItem = items.find(item => item.id === vegetable.id)
@@ -98,7 +98,7 @@ export default function VegetableCard({ vegetable }: VegetableCardProps) {
           <img
             src={imageSrc}
             alt={vegetable.name}
-            className="w-full h-36 object-cover"
+            className="w-full h-24 sm:h-32 md:h-36 object-cover"
             onError={(e) => {
               // Hide broken image and show "No Image" placeholder
               const target = e.target as HTMLImageElement
@@ -106,9 +106,9 @@ export default function VegetableCard({ vegetable }: VegetableCardProps) {
               const parent = target.parentElement
               if (parent) {
                 parent.innerHTML = `
-                  <div class="w-full h-36 bg-gray-100 flex items-center justify-center border-b border-gray-200">
+                  <div class="w-full h-24 sm:h-32 md:h-36 bg-gray-100 flex items-center justify-center border-b border-gray-200">
                     <div class="text-center">
-                      <div class="text-gray-400 text-sm font-medium">No Image</div>
+                      <div class="text-gray-400 text-xs sm:text-sm font-medium">No Image</div>
                     </div>
                   </div>
                 `
@@ -136,15 +136,15 @@ export default function VegetableCard({ vegetable }: VegetableCardProps) {
         </div>
 
         {/* Content */}
-        <div className="p-4">
+        <div className="p-3 sm:p-4">
           {/* Product Name */}
-          <h3 className="text-lg font-bold text-gray-900 mb-3 text-center">
+          <h3 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 mb-2 sm:mb-3 text-center">
             {vegetable.name}
           </h3>
           
           {/* Fixed Weight Display */}
-          <div className="mb-3 text-center">
-            <div className="inline-block px-3 py-2 bg-green-100 text-green-800 text-sm font-medium rounded-lg border border-green-200">
+          <div className="mb-2 sm:mb-3 text-center">
+            <div className="inline-block px-2 sm:px-3 py-1 sm:py-2 bg-green-100 text-green-800 text-xs sm:text-sm font-medium rounded-lg border border-green-200">
               Weight: {weight}
             </div>
           </div>
@@ -154,7 +154,7 @@ export default function VegetableCard({ vegetable }: VegetableCardProps) {
             <div className="text-center">
               <motion.button
                 onClick={handleAddToCart}
-                className="w-full px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white text-xs font-semibold rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 border border-green-400"
+                className="w-full px-2 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-green-500 to-green-600 text-white text-xs font-semibold rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 border border-green-400"
                 title="Add to Cart"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -169,42 +169,42 @@ export default function VegetableCard({ vegetable }: VegetableCardProps) {
           {isInCart && (
             <div className="text-center">
               {/* Quantity Controls */}
-              <div className="flex items-center justify-center gap-3 mb-3">
+              <div className="flex items-center justify-center gap-2 sm:gap-3 mb-2 sm:mb-3">
                 <motion.button
                   onClick={handleDecreaseQuantity}
-                  className="w-10 h-10 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors shadow-lg"
+                  className="w-8 h-8 sm:w-10 sm:h-10 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors shadow-lg"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
                   title="Decrease Quantity"
                 >
-                  <Minus className="w-4 h-4" />
+                  <Minus className="w-3 h-3 sm:w-4 sm:h-4" />
                 </motion.button>
                 
-                <div className="w-12 h-10 bg-white border-2 border-green-200 rounded-lg flex items-center justify-center shadow-lg">
-                  <span className="text-green-600 font-bold text-lg">{quantity}</span>
+                <div className="w-10 h-8 sm:w-12 sm:h-10 bg-white border-2 border-green-200 rounded-lg flex items-center justify-center shadow-lg">
+                  <span className="text-green-600 font-bold text-sm sm:text-lg">{quantity}</span>
                 </div>
                 
                 <motion.button
                   onClick={handleIncreaseQuantity}
-                  className="w-10 h-10 bg-green-500 text-white rounded-full flex items-center justify-center hover:bg-green-600 transition-colors shadow-lg"
+                  className="w-8 h-8 sm:w-10 sm:h-10 bg-green-500 text-white rounded-full flex items-center justify-center hover:bg-green-600 transition-colors shadow-lg"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
                   title="Increase Quantity"
                   disabled={!canAddItem(weightInKg)}
                 >
-                  <Plus className="w-4 h-4" />
+                  <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
                 </motion.button>
               </div>
               
               {/* In Cart Badge */}
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full border border-green-200">
-                <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+              <div className="inline-flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full border border-green-200">
+                <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-500 rounded-full"></span>
                 In Cart
               </div>
               
               {/* Total Weight for this item */}
-              <div className="mt-2 text-xs text-gray-600">
-                Total: {(weightInKg * quantity).toFixed(2)}kg
+              <div className="mt-1 sm:mt-2 text-xs text-gray-600">
+                Total: {formatWeight(weightInKg * quantity)}
               </div>
             </div>
           )}
@@ -216,7 +216,7 @@ export default function VegetableCard({ vegetable }: VegetableCardProps) {
                 <span className="font-medium">Cart:</span> {cartType === 'small' ? 'Small (4.5kg)' : 'Family (7kg)'}
               </div>
               <div className="text-xs text-gray-500">
-                <span className="font-medium">Used:</span> {totalWeight.toFixed(2)}kg
+                <span className="font-medium">Used:</span> {formatTotalWeight(totalWeight)}
               </div>
             </div>
           )}

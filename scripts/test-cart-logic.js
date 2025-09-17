@@ -1,12 +1,12 @@
 // Test script to verify cart logic and weight calculations
 console.log('🧪 Testing Cart Logic and Weight Calculations\n');
 
-// Simulate the weight calculation logic from VegetableCard
+// Simulate the weight calculation logic from VegetableCard (updated to use parseFloat)
 function calculateWeightInKg(weight) {
   if (weight.includes('kg')) {
     return parseFloat(weight.replace('kg', ''))
   }
-  const grams = parseInt(weight.replace('g', ''))
+  const grams = parseFloat(weight.replace('g', ''))
   return grams / 1000
 }
 

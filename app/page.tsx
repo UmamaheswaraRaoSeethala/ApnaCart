@@ -10,6 +10,7 @@ import CartDrawer from '@/components/CartDrawer'
 import Header from '@/components/Header'
 import { Vegetable } from '@prisma/client'
 import { CartProvider, useCart } from '@/contexts/CartContext'
+import { formatWeight, formatTotalWeight } from '@/utils/weightUtils'
 
 function VegetablesSection() {
   const [vegetables, setVegetables] = useState<Vegetable[]>([])
@@ -50,10 +51,10 @@ function VegetablesSection() {
     const message = `🍅 *ApnaCart Order*\n\n` +
       `*Cart Type:* ${cartTypeText}\n` +
       `*Selected Vegetables:*\n${itemsList}\n\n` +
-      `*Total Weight:* ${totalWeight.toFixed(2)}kg\n\n` +
+      `*Total Weight:* ${formatTotalWeight(totalWeight)}\n\n` +
       `*Order Summary:*\n` +
       `• Cart Type: ${cartTypeText}\n` +
-      `• Total Weight: ${totalWeight.toFixed(2)}kg\n` +
+      `• Total Weight: ${formatTotalWeight(totalWeight)}\n` +
       `• Items: ${items.length}\n\n` +
       `Please confirm this order.`
 
@@ -88,7 +89,7 @@ function VegetablesSection() {
             <span className="font-medium">
               {canPlaceOrder 
                 ? 'You can now place your order' 
-                : `Add ${remainingWeight.toFixed(2)}kg to place your order`
+                : `Add ${formatTotalWeight(remainingWeight)} to place your order`
               }
             </span>
           </div>
@@ -96,7 +97,7 @@ function VegetablesSection() {
       </div>
 
       {/* Vegetables Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 md:gap-4 mb-12 px-4 md:px-0">
+      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8 gap-3 md:gap-4 mb-12 px-4 md:px-0">
         {vegetables.map((vegetable: Vegetable) => (
           <VegetableCard
             key={vegetable.id}
@@ -120,7 +121,7 @@ function VegetablesSection() {
                 <span className="text-lg font-semibold text-gray-800">{item.vegetable.name}</span>
                 <div className="text-right">
                   <span className="text-lg font-semibold text-gray-700">{item.quantity}x {item.weight}</span>
-                  <div className="text-sm text-gray-500">({(item.weightInKg * item.quantity).toFixed(2)}kg)</div>
+                  <div className="text-sm text-gray-500">({formatWeight(item.weightInKg * item.quantity)} total)</div>
                 </div>
               </div>
             ))}
@@ -128,10 +129,10 @@ function VegetablesSection() {
           
           <div className="border-t border-green-200 pt-6">
             <div className="flex justify-between items-center">
-              <span className="text-2xl font-bold text-gray-800">Total Weight: {totalWeight.toFixed(2)}kg</span>
+              <span className="text-2xl font-bold text-gray-800">Total Weight: {formatTotalWeight(totalWeight)}</span>
               {!canPlaceOrder && (
                 <span className="text-red-600 text-lg font-semibold bg-red-100 px-6 py-3 rounded-xl border border-red-200">
-                  📝 Add {remainingWeight.toFixed(2)}kg to place your order
+                  📝 Add {formatTotalWeight(remainingWeight)} to place your order
                 </span>
               )}
             </div>

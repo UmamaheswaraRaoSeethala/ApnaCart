@@ -22,10 +22,11 @@ export default function CartSelection() {
         </p>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 max-w-4xl mx-auto px-4 md:px-0">
+      <div className="flex justify-center px-4 md:px-0">
+        <div className="grid grid-cols-2 md:grid-cols-2 gap-4 md:gap-6">
         {/* Small Cart */}
         <motion.div 
-          className={`relative p-6 md:p-8 rounded-2xl border-2 transition-all duration-300 cursor-pointer overflow-hidden ${
+          className={`relative p-4 md:p-6 lg:p-8 rounded-2xl border-2 transition-all duration-300 cursor-pointer overflow-hidden ${
             cartType === 'small'
               ? 'border-green-500 bg-green-50 shadow-xl scale-105'
               : 'border-green-200 bg-white/80 backdrop-blur-sm hover:border-green-400 shadow-lg hover:shadow-xl hover:scale-105'
@@ -41,21 +42,21 @@ export default function CartSelection() {
           </div>
 
           <div className="relative text-center">
-            <div className="text-6xl mb-6 transition-transform duration-300 hover:scale-110">
+            <div className="text-4xl md:text-6xl mb-3 md:mb-6 transition-transform duration-300 hover:scale-110">
               🥬
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-3">
+            <h3 className="text-lg md:text-2xl font-bold text-gray-900 mb-2 md:mb-3">
               Small Cart
             </h3>
-            <div className="text-3xl font-bold text-green-600 mb-3">
+            <div className="text-2xl md:text-3xl font-bold text-green-600 mb-2 md:mb-3">
               ₹349
             </div>
-            <p className="text-gray-600 text-base mb-4">
-              Perfect for small families or weekly shopping
+            <p className="text-gray-600 text-sm md:text-base mb-3 md:mb-4">
+              Perfect for small families
             </p>
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-100 rounded-full text-green-800 font-medium border border-green-200">
-              <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-              Up to 4.5 kg vegetables
+            <div className="inline-flex items-center gap-1 md:gap-2 px-2 md:px-4 py-1 md:py-2 bg-green-100 rounded-full text-green-800 font-medium border border-green-200 text-xs md:text-sm">
+              <span className="w-1.5 h-1.5 md:w-2 md:h-2 bg-green-500 rounded-full"></span>
+              Up to 4.5 kg
             </div>
             
             {/* Selection Indicator */}
@@ -63,7 +64,7 @@ export default function CartSelection() {
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                className="absolute top-4 right-4 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white"
+                className="absolute top-2 right-2 md:top-4 md:right-4 w-6 h-6 md:w-8 md:h-8 bg-green-500 rounded-full flex items-center justify-center text-white text-sm md:text-base"
               >
                 ✓
               </motion.div>
@@ -73,7 +74,7 @@ export default function CartSelection() {
 
         {/* Family Cart */}
         <motion.div 
-          className={`relative p-6 md:p-8 rounded-2xl border-2 transition-all duration-300 cursor-pointer overflow-hidden ${
+          className={`relative p-4 md:p-6 lg:p-8 rounded-2xl border-2 transition-all duration-300 cursor-pointer overflow-hidden ${
             cartType === 'family'
               ? 'border-green-500 bg-green-50 shadow-xl scale-105'
               : 'border-green-200 bg-white/80 backdrop-blur-sm hover:border-green-400 shadow-lg hover:shadow-xl hover:scale-105'
@@ -89,21 +90,21 @@ export default function CartSelection() {
           </div>
           
           <div className="relative text-center">
-            <div className="text-6xl mb-6 transition-transform duration-300 hover:scale-110">
+            <div className="text-4xl md:text-6xl mb-3 md:mb-6 transition-transform duration-300 hover:scale-110">
               🥕
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-3">
+            <h3 className="text-lg md:text-2xl font-bold text-gray-900 mb-2 md:mb-3">
               Family Cart
             </h3>
-            <div className="text-3xl font-bold text-green-600 mb-3">
+            <div className="text-2xl md:text-3xl font-bold text-green-600 mb-2 md:mb-3">
               ₹559
             </div>
-            <p className="text-gray-600 text-base mb-4">
-              Ideal for larger families or extended shopping
+            <p className="text-gray-600 text-sm md:text-base mb-3 md:mb-4">
+              Ideal for larger families
             </p>
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-100 rounded-full text-green-800 font-medium border border-green-200">
-              <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-              Up to 7 kg vegetables
+            <div className="inline-flex items-center gap-1 md:gap-2 px-2 md:px-4 py-1 md:py-2 bg-green-100 rounded-full text-green-800 font-medium border border-green-200 text-xs md:text-sm">
+              <span className="w-1.5 h-1.5 md:w-2 md:h-2 bg-green-500 rounded-full"></span>
+              Up to 7 kg
             </div>
             
             {/* Selection Indicator */}
@@ -111,13 +112,14 @@ export default function CartSelection() {
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                className="absolute top-4 right-4 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white"
+                className="absolute top-2 right-2 md:top-4 md:right-4 w-6 h-6 md:w-8 md:h-8 bg-green-500 rounded-full flex items-center justify-center text-white text-sm md:text-base"
               >
                 ✓
               </motion.div>
             )}
           </div>
         </motion.div>
+        </div>
       </div>
       
       {/* Cart Selection Feedback */}

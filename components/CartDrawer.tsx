@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useCart } from '@/contexts/CartContext'
 import { X, Trash2, Plus, Minus, ShoppingBag, MessageCircle } from 'lucide-react'
 import { getVegetableImage } from '@/utils/imageUtils'
+import { formatWeight, formatTotalWeight } from '@/utils/weightUtils'
 
 export default function CartDrawer() {
   const { state, closeCart, removeItem, updateQuantity, clearCart, getRemainingWeight, getCartLimit } = useCart()
@@ -43,17 +44,17 @@ export default function CartDrawer() {
 
     const cartTypeText = cartType === 'small' ? 'Small Cart (4.5kg)' : 'Family Cart (7kg)'
     const itemsList = items
-      .map(item => `${item.vegetable.name} – ${item.weight} x${item.quantity} = ${(item.weightInKg * item.quantity).toFixed(2)}kg`)
+      .map(item => `${item.vegetable.name} – ${item.weight} x${item.quantity} = ${formatWeight(item.weightInKg * item.quantity)}`)
       .join('\n')
 
     const message = `🛒 *ApnaCart Order*\n\n` +
       `*Cart Type:* ${cartTypeText}\n` +
-      `*Total Weight:* ${totalWeight.toFixed(2)}kg\n` +
+      `*Total Weight:* ${formatTotalWeight(totalWeight)}\n` +
       `*Items Count:* ${itemCount}\n\n` +
       `*Selected Vegetables:*\n${itemsList}\n\n` +
       `*Order Summary:*\n` +
       `• Cart Type: ${cartTypeText}\n` +
-      `• Total Weight: ${totalWeight.toFixed(2)}kg\n` +
+      `• Total Weight: ${formatTotalWeight(totalWeight)}\n` +
       `• Items: ${items.length}\n` +
       `• Individual Items: ${itemCount}\n\n` +
       `Please confirm this order and provide delivery details.`
@@ -120,8 +121,8 @@ export default function CartDrawer() {
                   />
                 </div>
                 <div className="flex justify-between text-xs text-gray-600 mt-1">
-                  <span>{totalWeight.toFixed(2)}kg used</span>
-                  <span>{remainingWeight}kg remaining</span>
+                  <span>{formatTotalWeight(totalWeight)} used</span>
+                  <span>{remainingWeight} remaining</span>
                 </div>
               </div>
             )}
@@ -176,7 +177,7 @@ export default function CartDrawer() {
                           Weight: {item.weight}
                         </p>
                         <p className="text-sm text-gray-500">
-                          {(item.weightInKg * item.quantity).toFixed(2)}kg total
+                          {formatWeight(item.weightInKg * item.quantity)} total
                         </p>
                       </div>
                       
@@ -222,7 +223,7 @@ export default function CartDrawer() {
               <div className="border-t border-gray-200 p-4 bg-gray-50">
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-lg font-medium text-gray-900">
-                    Total Weight: {totalWeight.toFixed(2)}kg
+                    Total Weight: {formatTotalWeight(totalWeight)}
                   </span>
                   <span className="text-sm text-gray-500">
                     {itemCount} {itemCount === 1 ? 'item' : 'items'}
