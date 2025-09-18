@@ -14,8 +14,7 @@
     "migrate:deploy": "prisma migrate deploy",
     "db:seed": "tsx prisma/seed.ts",
     "db:reset": "prisma migrate reset && npm run db:seed",
-    "setup": "prisma db push && npm run db:seed",
-    "setup:vercel": "node scripts/setup-vercel-db.js"
+    "setup": "prisma db push && npm run db:seed"
   },
   "dependencies": {
     "@prisma/client": "^5.7.1",
