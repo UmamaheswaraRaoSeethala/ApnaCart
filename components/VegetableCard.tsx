@@ -15,9 +15,10 @@ interface VegetableCardProps {
 }
 
 export default function VegetableCard({ vegetable }: VegetableCardProps) {
-  const { addItem, canAddItem, getRemainingWeight, getCartLimit, state, updateQuantity, removeItem } = useCart()
+  const { addItem, canAddItem, wouldExceedLimit, isCartAtLimit, getRemainingWeight, getCartLimit, state, updateQuantity, removeItem } = useCart()
   const [isFlying, setIsFlying] = useState(false)
   const [showWarning, setShowWarning] = useState(false)
+  const [warningMessage, setWarningMessage] = useState('')
   
   const { cartType, totalWeight, items } = state
   
@@ -42,30 +43,60 @@ export default function VegetableCard({ vegetable }: VegetableCardProps) {
       return
     }
     
-    if (canAddItem(weightInKg)) {
-      // Start flying animation
-      setIsFlying(true)
-      
-      // Add item to cart
-      const success = addItem(vegetable, weight, weightInKg)
-      
-      if (success) {
-        // Animation will complete and reset isFlying
-      }
-    } else {
-      // Show weight limit warning
+    if (wouldExceedLimit(weightInKg)) {
+      // Show specific warning message
+      const cartLimit = cartType === 'small' ? '4.5kg' : '7kg'
+      setWarningMessage(`Cart limit exceeded – Please remove some items. Current limit: ${cartLimit}`)
       setShowWarning(true)
-      setTimeout(() => setShowWarning(false), 5000)
+      setTimeout(() => {
+        setShowWarning(false)
+        setWarningMessage('')
+      }, 5000)
+      return
+    }
+    
+    // Start flying animation
+    setIsFlying(true)
+    
+    // Add item to cart
+    const success = addItem(vegetable, weight, weightInKg)
+    
+    if (!success) {
+      // This shouldn't happen with our new logic, but just in case
+      setWarningMessage('Unable to add item to cart')
+      setShowWarning(true)
+      setTimeout(() => {
+        setShowWarning(false)
+        setWarningMessage('')
+      }, 3000)
     }
   }
   
   const handleIncreaseQuantity = () => {
     if (cartItem) {
       const newQuantity = quantity + 1
+      const additionalWeight = weightInKg // Adding one more item
+      
+      if (wouldExceedLimit(additionalWeight)) {
+        // Show specific warning message
+        const cartLimit = cartType === 'small' ? '4.5kg' : '7kg'
+        setWarningMessage(`Cart limit exceeded – Cannot add more. Current limit: ${cartLimit}`)
+        setShowWarning(true)
+        setTimeout(() => {
+          setShowWarning(false)
+          setWarningMessage('')
+        }, 5000)
+        return
+      }
+      
       const success = updateQuantity(cartItem.id, newQuantity)
       if (!success) {
+        setWarningMessage('Unable to update quantity')
         setShowWarning(true)
-        setTimeout(() => setShowWarning(false), 5000)
+        setTimeout(() => {
+          setShowWarning(false)
+          setWarningMessage('')
+        }, 3000)
       }
     }
   }
@@ -100,15 +131,22 @@ export default function VegetableCard({ vegetable }: VegetableCardProps) {
             alt={vegetable.name}
             className="w-full h-24 sm:h-32 md:h-36 object-cover"
             onError={(e) => {
-              // Hide broken image and show "No Image" placeholder
+              // Try fallback to default image first
               const target = e.target as HTMLImageElement
+              if (!target.src.includes('/images/default.jpeg')) {
+                target.src = '/images/default.jpeg'
+                return
+              }
+              
+              // If even default fails, show placeholder
               target.style.display = 'none'
               const parent = target.parentElement
               if (parent) {
                 parent.innerHTML = `
-                  <div class="w-full h-24 sm:h-32 md:h-36 bg-gray-100 flex items-center justify-center border-b border-gray-200">
+                  <div class="w-full h-24 sm:h-32 md:h-36 bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center border-b border-green-300">
                     <div class="text-center">
-                      <div class="text-gray-400 text-xs sm:text-sm font-medium">No Image</div>
+                      <div class="text-green-600 text-2xl sm:text-3xl mb-1">🥬</div>
+                      <div class="text-green-700 text-xs sm:text-sm font-medium">Fresh Vegetable</div>
                     </div>
                   </div>
                 `
@@ -237,6 +275,7 @@ export default function VegetableCard({ vegetable }: VegetableCardProps) {
         onClose={() => setShowWarning(false)}
         remainingWeight={getRemainingWeight()}
         cartType={cartType || 'small'}
+        customMessage={warningMessage}
       />
     </>
   )

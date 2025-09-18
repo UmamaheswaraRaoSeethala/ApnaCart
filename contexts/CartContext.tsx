@@ -160,6 +160,8 @@ interface CartContextType {
   closeCart: () => void
   clearCart: () => void
   canAddItem: (weightInKg: number) => boolean
+  wouldExceedLimit: (weightInKg: number) => boolean
+  isCartAtLimit: () => boolean
   getRemainingWeight: () => string
   getCartLimit: () => number
 }
@@ -222,6 +224,18 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     return state.totalWeight + weightInKg <= cartLimit
   }
   
+  const wouldExceedLimit = (weightInKg: number): boolean => {
+    if (!state.cartType) return false
+    const cartLimit = state.cartType === 'small' ? 4.5 : 7.0
+    return state.totalWeight + weightInKg > cartLimit
+  }
+  
+  const isCartAtLimit = (): boolean => {
+    if (!state.cartType) return false
+    const cartLimit = state.cartType === 'small' ? 4.5 : 7.0
+    return state.totalWeight >= cartLimit
+  }
+  
   const getRemainingWeight = (): string => {
     if (!state.cartType) return '0.00'
     const cartLimit = state.cartType === 'small' ? 4.5 : 7.0
@@ -245,6 +259,8 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     closeCart,
     clearCart,
     canAddItem,
+    wouldExceedLimit,
+    isCartAtLimit,
     getRemainingWeight,
     getCartLimit
   }

@@ -22,6 +22,8 @@ export const getVegetableImage = (vegetableName: string): string => {
     'brinjal': 'Brinjal white.jpeg',
     'cluster beans': 'Cluster Beans.jpeg',
     'curry leaves': 'Curry Leaves + Coriander + Mint Leaves.png',
+    'coriander': 'Curry Leaves + Coriander + Mint Leaves.png',
+    'mint leaves': 'Curry Leaves + Coriander + Mint Leaves.png',
     'dondakaya': 'Dondakaya.jpeg',
     'dosakaya': 'Dosakaya(1-2 pieces).jpeg',
     'drumstick': 'Drumstick.jpg',

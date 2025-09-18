@@ -8,13 +8,15 @@ interface WeightLimitWarningProps {
   onClose: () => void
   remainingWeight: string
   cartType: 'small' | 'family'
+  customMessage?: string
 }
 
 export default function WeightLimitWarning({ 
   isVisible, 
   onClose, 
   remainingWeight, 
-  cartType 
+  cartType,
+  customMessage
 }: WeightLimitWarningProps) {
   return (
     <AnimatePresence>
@@ -36,11 +38,13 @@ export default function WeightLimitWarning({
                   Cart Weight Limit Reached
                 </h3>
                 <p className="text-sm text-red-700 mb-2">
-                  You've reached the maximum weight limit for your {cartType === 'small' ? 'Small Cart (4.5kg)' : 'Family Cart (7kg)'}.
+                  {customMessage || `You've reached the maximum weight limit for your ${cartType === 'small' ? 'Small Cart (4.5kg)' : 'Family Cart (7kg)'}.`}
                 </p>
-                <p className="text-sm text-red-600">
-                  Remove some items or edit quantities to add more vegetables.
-                </p>
+                {!customMessage && (
+                  <p className="text-sm text-red-600">
+                    Remove some items or edit quantities to add more vegetables.
+                  </p>
+                )}
               </div>
               
               <button
