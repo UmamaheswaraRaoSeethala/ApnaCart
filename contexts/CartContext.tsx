@@ -129,6 +129,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
     }
     
     case 'OPEN_CART':
+      console.log('OPEN_CART action dispatched - current isOpen:', state.isOpen, 'setting to true')
       return { ...state, isOpen: true }
     
     case 'CLOSE_CART':
@@ -208,7 +209,18 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   
   const openCart = () => {
     console.log('openCart called - current state:', { isOpen: state.isOpen, totalWeight: state.totalWeight, cartType: state.cartType })
+    
+    // Force dispatch the action
     dispatch({ type: 'OPEN_CART' })
+    
+    // Double-check after a small delay to ensure state update
+    setTimeout(() => {
+      console.log('openCart post-dispatch state check:', { isOpen: state.isOpen })
+      if (!state.isOpen) {
+        console.warn('Cart failed to open, forcing open...')
+        dispatch({ type: 'OPEN_CART' })
+      }
+    }, 50)
   }
   
   const closeCart = () => {

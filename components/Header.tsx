@@ -75,9 +75,18 @@ export default function Header() {
             {/* Cart Button */}
             <div className="relative">
               <motion.button
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
                   console.log('Cart button clicked - itemCount:', itemCount, 'isCartFull:', isCartFull, 'totalWeight:', totalWeight)
-                  openCart()
+                  
+                  // Force cart to open regardless of state
+                  try {
+                    openCart()
+                    console.log('openCart() called successfully')
+                  } catch (error) {
+                    console.error('Error opening cart:', error)
+                  }
                 }}
                 className={`p-3 rounded-full transition-all duration-200 shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-green-300 ${
                   itemCount > 0 
@@ -87,6 +96,7 @@ export default function Header() {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
                 title={itemCount > 0 ? `View Cart (${itemCount} items) - Always accessible` : "View Cart (Empty) - Always accessible"}
+                type="button"
               >
                 <ShoppingCart className="w-5 h-5" />
               </motion.button>
