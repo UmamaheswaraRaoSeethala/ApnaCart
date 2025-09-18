@@ -5,6 +5,10 @@ import { useCart } from '@/contexts/CartContext'
 import { X, Trash2, Plus, Minus, ShoppingBag, MessageCircle } from 'lucide-react'
 import { getVegetableImage } from '@/utils/imageUtils'
 import { formatWeight, formatTotalWeight } from '@/utils/weightUtils'
+import React, { useEffect } from 'react'
+
+// Global cart drawer control
+let globalCartDrawerControl: { open: () => void; close: () => void } | null = null
 
 export default function CartDrawer() {
   const { state, closeCart, removeItem, updateQuantity, clearCart, getRemainingWeight, getCartLimit, forceCartOpen } = useCart()
@@ -15,6 +19,35 @@ export default function CartDrawer() {
   const remainingWeightString = getRemainingWeight()
   const remainingWeight = parseFloat(remainingWeightString)
   const isCartFull = totalWeight >= cartLimit
+  
+  // Local state for manual cart control
+  const [manualOpen, setManualOpen] = React.useState(false)
+  
+  // Register global control
+  useEffect(() => {
+    const control = {
+      open: () => {
+        console.log('Global cart control - forcing open')
+        setManualOpen(true)
+      },
+      close: () => {
+        console.log('Global cart control - closing')
+        setManualOpen(false)
+        closeCart()
+      }
+    }
+    
+    globalCartDrawerControl = control
+    // Also attach to window for emergency access
+    ;(window as any).globalCartDrawerControl = control
+    
+    return () => {
+      globalCartDrawerControl = null
+      if ((window as any).globalCartDrawerControl) {
+        delete (window as any).globalCartDrawerControl
+      }
+    }
+  }, [closeCart])
   
   const handleQuantityChange = (id: number, newQuantity: number) => {
     if (newQuantity <= 0) {
@@ -69,10 +102,15 @@ export default function CartDrawer() {
   }
   
   // Debug logging
-  console.log('CartDrawer render - isOpen:', isOpen, 'forceCartOpen:', forceCartOpen, 'itemCount:', itemCount, 'totalWeight:', totalWeight, 'isCartFull:', isCartFull)
+  console.log('CartDrawer render - isOpen:', isOpen, 'forceCartOpen:', forceCartOpen, 'manualOpen:', manualOpen, 'itemCount:', itemCount, 'totalWeight:', totalWeight, 'isCartFull:', isCartFull)
   
-  // Force render if cart should be open - use EITHER condition
-  const shouldBeOpen = isOpen || forceCartOpen
+  // Force render if cart should be open - use ANY condition
+  const shouldBeOpen = isOpen || forceCartOpen || manualOpen
+  
+  const handleCloseCart = () => {
+    setManualOpen(false)
+    closeCart()
+  }
   
   return (
     <AnimatePresence mode="wait">
@@ -83,7 +121,7 @@ export default function CartDrawer() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={closeCart}
+            onClick={handleCloseCart}
             className="fixed inset-0 bg-black/50 z-40"
           />
           
@@ -101,10 +139,10 @@ export default function CartDrawer() {
                 <ShoppingBag className="w-6 h-6 text-green-600" />
                 <h2 className="text-xl font-bold text-gray-900">Shopping Cart</h2>
               </div>
-              <button
-                onClick={closeCart}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-              >
+               <button
+                 onClick={handleCloseCart}
+                 className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+               >
                 <X className="w-5 h-5 text-gray-500" />
               </button>
             </div>

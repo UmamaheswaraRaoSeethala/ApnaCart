@@ -80,10 +80,20 @@ export default function Header() {
                   e.stopPropagation()
                   console.log('Cart button clicked - itemCount:', itemCount, 'isCartFull:', isCartFull, 'totalWeight:', totalWeight)
                   
-                  // Force cart to open regardless of state
+                  // Try multiple approaches to force cart open
                   try {
+                    // Method 1: Normal state management
                     openCart()
-                    console.log('openCart() called successfully')
+                    console.log('Method 1: openCart() called')
+                    
+                    // Method 2: Global control fallback
+                    setTimeout(() => {
+                      if (window && (window as any).globalCartDrawerControl) {
+                        console.log('Method 2: Using global control fallback')
+                        ;(window as any).globalCartDrawerControl.open()
+                      }
+                    }, 100)
+                    
                   } catch (error) {
                     console.error('Error opening cart:', error)
                   }
