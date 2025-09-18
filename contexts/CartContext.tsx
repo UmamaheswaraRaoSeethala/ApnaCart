@@ -165,12 +165,14 @@ interface CartContextType {
   isCartAtLimit: () => boolean
   getRemainingWeight: () => string
   getCartLimit: () => number
+  forceCartOpen: boolean
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined)
 
 export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(cartReducer, initialState)
+  const [forceCartOpen, setForceCartOpen] = React.useState(false)
   
   const addItem = (vegetable: Vegetable, weight: string, weightInKg: number): boolean => {
     if (!state.cartType) return false
@@ -210,21 +212,22 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const openCart = () => {
     console.log('openCart called - current state:', { isOpen: state.isOpen, totalWeight: state.totalWeight, cartType: state.cartType })
     
-    // Force dispatch the action
+    // Use both reducer dispatch AND direct state for maximum reliability
     dispatch({ type: 'OPEN_CART' })
+    setForceCartOpen(true)
     
-    // Double-check after a small delay to ensure state update
+    // Reset force state after a delay
     setTimeout(() => {
-      console.log('openCart post-dispatch state check:', { isOpen: state.isOpen })
-      if (!state.isOpen) {
-        console.warn('Cart failed to open, forcing open...')
-        dispatch({ type: 'OPEN_CART' })
-      }
-    }, 50)
+      setForceCartOpen(false)
+    }, 1000)
+    
+    console.log('openCart completed - both dispatch and force state set')
   }
   
   const closeCart = () => {
     dispatch({ type: 'CLOSE_CART' })
+    setForceCartOpen(false)
+    console.log('closeCart called - both state and force cleared')
   }
   
   const clearCart = () => {
@@ -275,7 +278,8 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     wouldExceedLimit,
     isCartAtLimit,
     getRemainingWeight,
-    getCartLimit
+    getCartLimit,
+    forceCartOpen
   }
   
   return (

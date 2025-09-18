@@ -7,7 +7,7 @@ import { getVegetableImage } from '@/utils/imageUtils'
 import { formatWeight, formatTotalWeight } from '@/utils/weightUtils'
 
 export default function CartDrawer() {
-  const { state, closeCart, removeItem, updateQuantity, clearCart, getRemainingWeight, getCartLimit } = useCart()
+  const { state, closeCart, removeItem, updateQuantity, clearCart, getRemainingWeight, getCartLimit, forceCartOpen } = useCart()
   const { items, totalWeight, cartType, isOpen } = state
   
   const itemCount = items.reduce((total, item) => total + item.quantity, 0)
@@ -69,10 +69,10 @@ export default function CartDrawer() {
   }
   
   // Debug logging
-  console.log('CartDrawer render - isOpen:', isOpen, 'itemCount:', itemCount, 'totalWeight:', totalWeight, 'isCartFull:', isCartFull)
+  console.log('CartDrawer render - isOpen:', isOpen, 'forceCartOpen:', forceCartOpen, 'itemCount:', itemCount, 'totalWeight:', totalWeight, 'isCartFull:', isCartFull)
   
-  // Force render if cart should be open but state is inconsistent
-  const shouldBeOpen = isOpen
+  // Force render if cart should be open - use EITHER condition
+  const shouldBeOpen = isOpen || forceCartOpen
   
   return (
     <AnimatePresence mode="wait">
