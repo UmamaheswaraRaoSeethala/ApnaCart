@@ -120,7 +120,7 @@ export default function VegetableCard({ vegetable }: VegetableCardProps) {
   return (
     <>
       <motion.div 
-        className="bg-white/90 backdrop-blur-md rounded-2xl shadow-lg border border-green-100 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden"
+        className="bg-white/90 backdrop-blur-md rounded-2xl shadow-lg border border-green-100 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden h-full flex flex-col"
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
       >
@@ -174,18 +174,21 @@ export default function VegetableCard({ vegetable }: VegetableCardProps) {
         </div>
 
         {/* Content */}
-        <div className="p-3 sm:p-4">
+        <div className="p-3 sm:p-4 flex flex-col flex-grow">
           {/* Product Name */}
-          <h3 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 mb-2 sm:mb-3 text-center">
+          <h3 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 mb-2 sm:mb-3 text-center min-h-[2.5rem] flex items-center justify-center">
             {vegetable.name}
           </h3>
           
           {/* Fixed Weight Display */}
-          <div className="mb-2 sm:mb-3 text-center">
+          <div className="mb-3 sm:mb-4 text-center">
             <div className="inline-block px-2 sm:px-3 py-1 sm:py-2 bg-green-100 text-green-800 text-xs sm:text-sm font-medium rounded-lg border border-green-200">
               Weight: {weight}
             </div>
           </div>
+          
+          {/* Spacer to push buttons to bottom */}
+          <div className="flex-grow"></div>
           
           {/* Add Button - Only show when not in cart */}
           {!isInCart && (
@@ -207,7 +210,7 @@ export default function VegetableCard({ vegetable }: VegetableCardProps) {
           {isInCart && (
             <div className="text-center">
               {/* Quantity Controls */}
-              <div className="flex items-center justify-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+              <div className="flex items-center justify-center gap-2 sm:gap-3 mb-3">
                 <motion.button
                   onClick={handleDecreaseQuantity}
                   className="w-8 h-8 sm:w-10 sm:h-10 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors shadow-lg"
@@ -234,15 +237,17 @@ export default function VegetableCard({ vegetable }: VegetableCardProps) {
                 </motion.button>
               </div>
               
-              {/* In Cart Badge */}
-              <div className="inline-flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full border border-green-200">
-                <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-500 rounded-full"></span>
-                In Cart
-              </div>
-              
-              {/* Total Weight for this item */}
-              <div className="mt-1 sm:mt-2 text-xs text-gray-600">
-                Total: {formatWeight(weightInKg * quantity)}
+              {/* In Cart Info */}
+              <div className="space-y-2">
+                <div className="inline-flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full border border-green-200">
+                  <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-500 rounded-full"></span>
+                  In Cart
+                </div>
+                
+                {/* Total Weight for this item */}
+                <div className="text-xs text-gray-600">
+                  Total: {formatWeight(weightInKg * quantity)}
+                </div>
               </div>
             </div>
           )}
