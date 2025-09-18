@@ -76,10 +76,14 @@ export default function Header() {
             <div className="relative">
               <motion.button
                 onClick={openCart}
-                className="p-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-full hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-green-300"
+                className={`p-3 rounded-full transition-all duration-200 shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-green-300 ${
+                  itemCount > 0 
+                    ? 'bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700' 
+                    : 'bg-gradient-to-r from-gray-400 to-gray-500 text-white hover:from-gray-500 hover:to-gray-600'
+                }`}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
-                title="View Cart"
+                title={itemCount > 0 ? `View Cart (${itemCount} items)` : "View Cart (Empty)"}
               >
                 <ShoppingCart className="w-5 h-5" />
               </motion.button>
