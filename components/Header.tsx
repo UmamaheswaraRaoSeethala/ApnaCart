@@ -1,11 +1,18 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { motion } from 'framer-motion'
-import { Instagram, MessageCircle } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Instagram, MessageCircle, ShoppingCart } from 'lucide-react'
+import { useCart } from '@/contexts/CartContext'
+import { formatTotalWeight } from '@/utils/weightUtils'
 
 export default function Header() {
   const router = useRouter()
+  const { state, openCart } = useCart()
+  const { items, totalWeight, cartType } = state
+  
+  const itemCount = items.reduce((total: number, item: any) => total + item.quantity, 0)
+  const isCartFull = cartType && totalWeight >= (cartType === 'small' ? 4.5 : 7.0)
 
   const handleLogoClick = () => {
     router.push('/')
@@ -65,21 +72,51 @@ export default function Header() {
               <MessageCircle className="w-5 h-5" />
             </motion.button>
 
-            {/* Admin Link - Hidden but functionality remains in codebase */}
-            {/* 
-            <motion.button
-              onClick={() => router.push('/admin')}
-              className="px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white font-medium rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-md hover:shadow-lg"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Admin
-            </motion.button>
-            */}
-
-            {/* Cart Icon - This will be positioned separately via CartIcon component */}
-            <div className="w-16 h-16 md:w-20 md:h-20">
-              {/* Cart icon will be rendered here by CartIcon component */}
+            {/* Cart Button */}
+            <div className="relative">
+              <motion.button
+                onClick={openCart}
+                className="p-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-full hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-green-300"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                title="View Cart"
+              >
+                <ShoppingCart className="w-5 h-5" />
+              </motion.button>
+              
+              {/* Item Count Badge */}
+              <AnimatePresence>
+                {itemCount > 0 && (
+                  <motion.div
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0, opacity: 0 }}
+                    className={`absolute -top-2 -right-2 w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center ${
+                      isCartFull 
+                        ? 'bg-green-500 text-white' 
+                        : 'bg-orange-500 text-white'
+                    }`}
+                  >
+                    {itemCount}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              
+              {/* Pulse Animation when cart is full */}
+              {isCartFull && (
+                <motion.div
+                  className="absolute inset-0 rounded-full border-2 border-green-400"
+                  animate={{
+                    scale: [1, 1.2, 1],
+                    opacity: [0.5, 0, 0.5]
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                />
+              )}
             </div>
           </nav>
         </div>

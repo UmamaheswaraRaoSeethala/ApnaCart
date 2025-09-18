@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import AddVegetableForm from '@/components/AddVegetableForm'
 import EditVegetableForm from '@/components/EditVegetableForm'
 import VegetablesList from '@/components/VegetablesList'
-import Header from '@/components/Header'
+import AdminHeader from '@/components/AdminHeader'
 import { Vegetable } from '@prisma/client'
 
 export default function AdminPage() {
@@ -106,8 +106,8 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 relative">
-      {/* Header */}
-      <Header />
+      {/* Admin Header */}
+      <AdminHeader onLogout={() => window.location.href = '/'} />
       
       {/* Fresh Vegetable Background */}
       <div className="absolute inset-0">

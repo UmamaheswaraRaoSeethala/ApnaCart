@@ -36,9 +36,9 @@ export function gramsToKg(grams: number): number {
 
 /**
  * Formats a weight in kilograms to display in the appropriate unit
- * - If weight >= 1kg, shows in kilograms (e.g., 1.5kg)
+ * - If weight >= 1kg, shows in kilograms (e.g., 1.75kg)
  * - If weight < 1kg, shows in grams (e.g., 250g, 500g)
- * - Removes unnecessary decimals (e.g., 1.00kg becomes 1kg)
+ * - Removes unnecessary decimals and trailing zeros (e.g., 2.00kg becomes 2kg, 1.75kg stays 1.75kg)
  * 
  * @param weightInKg - Weight in kilograms as a number
  * @returns Formatted weight string
@@ -49,8 +49,8 @@ export function formatWeight(weightInKg: number): string {
   // If weight is >= 1000g (1kg), display in kilograms
   if (weightInGrams >= 1000) {
     const kg = weightInGrams / 1000
-    // Remove unnecessary decimals (e.g., 1.00 -> 1, 1.50 -> 1.5)
-    const formattedKg = kg % 1 === 0 ? kg.toString() : kg.toFixed(1)
+    // Use .toFixed(2) for precision, then remove trailing zeros
+    const formattedKg = parseFloat(kg.toFixed(2)).toString()
     return `${formattedKg}kg`
   }
   

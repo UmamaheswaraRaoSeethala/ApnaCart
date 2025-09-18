@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import VegetableCard from '@/components/VegetableCard'
 import CartSelection from '@/components/CartSelection'
 import PWAInstaller from '@/components/PWAInstaller'
-import CartIcon from '@/components/CartIcon'
 import CartDrawer from '@/components/CartDrawer'
 import Header from '@/components/Header'
 import { Vegetable } from '@prisma/client'
@@ -107,14 +106,6 @@ function VegetablesSection() {
         </div>
       </div>
 
-      {/* Debug Info - Remove in production */}
-      <div className="mb-4 p-4 bg-yellow-100 border border-yellow-300 rounded-lg text-sm">
-        <p><strong>Debug Info:</strong></p>
-        <p>Cart Type: {cartType || 'None'}</p>
-        <p>Vegetables Count: {vegetables.length}</p>
-        <p>Loading: {loading ? 'Yes' : 'No'}</p>
-        <p>Error: {error || 'None'}</p>
-      </div>
 
       {/* Vegetables Grid */}
       {loading ? (
@@ -237,9 +228,6 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Cart Icon - Fixed Position */}
-          <CartIcon />
-          
           {/* Cart Drawer */}
           <CartDrawer />
         </div>

@@ -21,10 +21,6 @@ export default function CartSelection() {
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
           Select the basket size that fits your family's needs, then add your favorite vegetables.
         </p>
-        {/* Debug Info */}
-        <div className="mt-4 p-2 bg-blue-100 border border-blue-300 rounded text-sm">
-          Current Cart Type: {cartType || 'None selected'}
-        </div>
       </div>
       
       <div className="flex justify-center px-4 md:px-0">
