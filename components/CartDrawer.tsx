@@ -71,12 +71,9 @@ export default function CartDrawer() {
   // Debug logging
   console.log('CartDrawer render - isOpen:', isOpen, 'itemCount:', itemCount, 'totalWeight:', totalWeight, 'isCartFull:', isCartFull)
   
-  // Force render if cart should be open but state is inconsistent
-  const shouldBeOpen = isOpen
-  
   return (
-    <AnimatePresence mode="wait">
-      {shouldBeOpen && (
+    <AnimatePresence>
+      {isOpen && (
         <>
           {/* Backdrop */}
           <motion.div
