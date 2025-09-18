@@ -208,7 +208,7 @@ The app will use SQLite locally via Prisma.
 - Example value:
 
 ```
-DATABASE_URL="postgresql://admin:yourpassword@yourdb-endpoint.rds.amazonaws.com:5432/apnacart"
+DATABASE_URL="postgresql://3c08c8b05f6cad3891ac7b00d3db8556e8d9901ab2b32b7bca5ff0d92db5726e:sk_I5Ymsz0k9ord9BxvKeK0u@db.prisma.io:5432/postgres?sslmode=require"
 ```
 
 Next.js reads `DATABASE_URL` at build/runtime on the server automatically.
@@ -218,6 +218,13 @@ Next.js reads `DATABASE_URL` at build/runtime on the server automatically.
 - Local dev (SQLite):
   - Edit `prisma/schema.prisma`
   - Create a migration and update local DB: `npx prisma migrate dev`
+
+  datasource db {
+  provider = "postgresql"
+  url      = "postgres://3c08c8b05f6cad3891ac7b00d3db8556e8d9901ab2b32b7bca5ff0d92db5726e:sk_I5Ymsz0k9ord9BxvKeK0u@db.prisma.io:5432/postgres?sslmode=require"
+"
+}
+
 
 - Production (RDS via Amplify):
   - Commit and push

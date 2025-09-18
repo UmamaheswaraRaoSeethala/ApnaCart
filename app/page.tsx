@@ -14,6 +14,8 @@ import { formatWeight, formatTotalWeight } from '@/utils/weightUtils'
 
 function VegetablesSection() {
   const [vegetables, setVegetables] = useState<Vegetable[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const { state } = useCart()
   const { cartType, totalWeight, items } = state
   
@@ -21,13 +23,22 @@ function VegetablesSection() {
   useEffect(() => {
     const fetchVegetables = async () => {
       try {
+        setLoading(true)
+        setError(null)
         const response = await fetch('/api/vegetables')
         if (response.ok) {
           const data = await response.json()
-          setVegetables(data.vegetables)
+          setVegetables(data.vegetables || [])
+          console.log('Vegetables loaded:', data.vegetables?.length || 0)
+        } else {
+          setError('Failed to fetch vegetables')
+          console.error('API response not ok:', response.status)
         }
       } catch (error) {
         console.error('Error fetching vegetables:', error)
+        setError('Network error while fetching vegetables')
+      } finally {
+        setLoading(false)
       }
     }
 
@@ -68,7 +79,7 @@ function VegetablesSection() {
   }
 
   return (
-    <div className="mt-8">
+    <div className="mt-8 relative z-10">
       {/* Cart Type Display and Progress */}
       <div className="text-center mb-8">
         <div className="inline-block bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-full shadow-lg mb-6">
@@ -96,15 +107,44 @@ function VegetablesSection() {
         </div>
       </div>
 
-      {/* Vegetables Grid */}
-      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8 gap-3 md:gap-4 mb-12 px-4 md:px-0">
-        {vegetables.map((vegetable: Vegetable) => (
-          <VegetableCard
-            key={vegetable.id}
-            vegetable={vegetable}
-          />
-        ))}
+      {/* Debug Info - Remove in production */}
+      <div className="mb-4 p-4 bg-yellow-100 border border-yellow-300 rounded-lg text-sm">
+        <p><strong>Debug Info:</strong></p>
+        <p>Cart Type: {cartType || 'None'}</p>
+        <p>Vegetables Count: {vegetables.length}</p>
+        <p>Loading: {loading ? 'Yes' : 'No'}</p>
+        <p>Error: {error || 'None'}</p>
       </div>
+
+      {/* Vegetables Grid */}
+      {loading ? (
+        <div className="text-center py-12">
+          <div className="text-lg text-gray-600">Loading vegetables...</div>
+        </div>
+      ) : error ? (
+        <div className="text-center py-12">
+          <div className="text-lg text-red-600">Error: {error}</div>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
+          >
+            Retry
+          </button>
+        </div>
+      ) : vegetables.length === 0 ? (
+        <div className="text-center py-12">
+          <div className="text-lg text-gray-600">No vegetables available</div>
+        </div>
+      ) : (
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8 gap-3 md:gap-4 mb-12 px-4 md:px-0 relative z-10">
+          {vegetables.map((vegetable: Vegetable) => (
+            <VegetableCard
+              key={vegetable.id}
+              vegetable={vegetable}
+            />
+          ))}
+        </div>
+      )}
 
       {/* Order Summary - Only show when items are added */}
       {items.length > 0 && (
