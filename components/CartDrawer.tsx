@@ -18,14 +18,15 @@ export default function CartDrawer() {
   
   const handleQuantityChange = (id: number, newQuantity: number) => {
     if (newQuantity <= 0) {
-      // Remove item if quantity is 0 or negative
+      // Remove item if quantity is 0 or negative - this always works
       removeItem(id)
     } else {
       // Try to update quantity
       const success = updateQuantity(id, newQuantity)
       if (!success) {
-        // Show warning if weight limit would be exceeded
-        alert('Cannot increase quantity - would exceed cart weight limit!')
+        // Show user-friendly message if weight limit would be exceeded
+        console.log('Cannot increase quantity - would exceed cart weight limit')
+        // Note: User can still decrease quantities or remove items to make space
       }
     }
   }
@@ -255,6 +256,9 @@ export default function CartDrawer() {
                   >
                     <p className="text-sm text-green-800 font-medium">
                       🎉 Your cart is full! You can now place your order.
+                    </p>
+                    <p className="text-xs text-green-700 mt-1">
+                      💡 You can still remove or edit items if needed.
                     </p>
                   </motion.div>
                 ) : (

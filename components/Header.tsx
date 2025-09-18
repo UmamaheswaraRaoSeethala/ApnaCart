@@ -83,7 +83,7 @@ export default function Header() {
                 }`}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
-                title={itemCount > 0 ? `View Cart (${itemCount} items)` : "View Cart (Empty)"}
+                title={itemCount > 0 ? `View Cart (${itemCount} items) - Always accessible` : "View Cart (Empty) - Always accessible"}
               >
                 <ShoppingCart className="w-5 h-5" />
               </motion.button>
