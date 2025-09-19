@@ -17,7 +17,7 @@ const vegetables = [
   { name: 'Chamagadda', fixedWeight: '500g', weightUnit: '500g', imageUrl: '/images/Chamagadda.png' },
   { name: 'Cluster Beans', fixedWeight: '250g', weightUnit: '250g', imageUrl: '/images/Cluster Beans.jpeg' },
   { name: 'Cucumber', fixedWeight: '500g', weightUnit: '500g', imageUrl: '/images/Cucumber.jpg' },
-  { name: 'Curry Leaves + Coriander + Mint Leaves', fixedWeight: '250g', weightUnit: '250g', imageUrl: '/images/Curry Leaves + Coriander + Mint Leaves.png' },
+  { name: 'Curry Leaves + Coriander + Mint Leaves', fixedWeight: '250g', weightUnit: '250g', imageUrl: '/images/Curry-Leaves-Coriander-Mint-Leaves.png' },
   { name: 'Dondakaya', fixedWeight: '250g', weightUnit: '250g', imageUrl: '/images/Dondakaya.jpeg' },
   { name: 'Dosakaya(1-2 pieces)', fixedWeight: '250g', weightUnit: '250g', imageUrl: '/images/Dosakaya(1-2 pieces).jpeg' },
   { name: 'Drumstick(3-4 pieces)', fixedWeight: '250g', weightUnit: '250g', imageUrl: '/images/Drumstick.jpg' },
