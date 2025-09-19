@@ -20,6 +20,7 @@ export const getVegetableImage = (vegetableName: string): string => {
     'bottle gourd': 'Bottle Gourd(Sorakaya).jpeg',
     'broad beans': 'Broad Beans.jpeg',
     'brinjal': 'Brinjal white.jpeg',
+    'brinjal black': 'Brinjal Black.jpeg',
     'cluster beans': 'Cluster Beans.jpeg',
     'curry leaves + coriander + mint leaves': 'Curry Leaves + Coriander + Mint Leaves.png',
     'curry leaves': 'Curry Leaves + Coriander + Mint Leaves.png',

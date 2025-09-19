@@ -9,6 +9,7 @@ const vegetables = [
   { name: 'Bottle Gourd(Sorakaya)', fixedWeight: '500g', weightUnit: '500g', imageUrl: '/images/Bottle Gourd(Sorakaya).jpeg' },
   { name: 'Brinjal Vilote', fixedWeight: '250g', weightUnit: '250g', imageUrl: '/images/Brinjal Vilote.jpg' },
   { name: 'Brinjal White', fixedWeight: '250g', weightUnit: '250g', imageUrl: '/images/Brinjal white.jpeg' },
+  { name: 'Brinjal Black', fixedWeight: '250g', weightUnit: '250g', imageUrl: '/images/Brinjal Black.jpeg' },
   { name: 'Broad Beans', fixedWeight: '250g', weightUnit: '250g', imageUrl: '/images/Broad Beans.jpeg' },
   { name: 'Cabbage(1-piece)', fixedWeight: '500g', weightUnit: '500g', imageUrl: '/images/Cabbage.jpg' },
   { name: 'Capsicum', fixedWeight: '250g', weightUnit: '250g', imageUrl: '/images/Capsicum.png' },
