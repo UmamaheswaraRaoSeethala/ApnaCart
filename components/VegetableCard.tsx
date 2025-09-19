@@ -154,12 +154,6 @@ export default function VegetableCard({ vegetable }: VegetableCardProps) {
             }}
           />
           
-          {/* Brand Badge */}
-          <div className="absolute top-2 left-2">
-            <div className="px-2 py-1 bg-green-500/90 backdrop-blur-sm rounded-full text-xs font-semibold text-white shadow-lg border border-green-400">
-              ApnaCart
-            </div>
-          </div>
           
           {/* Quantity Badge if in cart */}
           {isInCart && (
