@@ -7,6 +7,7 @@ import CartSelection from '@/components/CartSelection'
 import PWAInstaller from '@/components/PWAInstaller'
 import CartDrawer from '@/components/CartDrawer'
 import Header from '@/components/Header'
+import FloatingCartButton from '@/components/FloatingCartButton'
 import { Vegetable } from '@prisma/client'
 import { CartProvider, useCart } from '@/contexts/CartContext'
 import { formatWeight, formatTotalWeight } from '@/utils/weightUtils'
@@ -228,6 +229,9 @@ export default function HomePage() {
             </div>
           </div>
 
+          {/* Floating Cart Button */}
+          <FloatingCartButton />
+          
           {/* Cart Drawer */}
           <CartDrawer />
         </div>
